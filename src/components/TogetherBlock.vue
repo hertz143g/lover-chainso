@@ -23,18 +23,21 @@
         </p>
 
         <!-- Низ -->
-        <p class="text-[22px] font-semibold text-right text-white/90 pb-4 pr-5">
-          {{ totalDays }} дней
-        </p>
-      </div>
+        <div class="flex justify-between items-end pb-4 px-5">
+          <!-- Кнопка выбора фото -->
+          <button
+            @click="pickImage"
+            class="w-8 h-8 bg-white/20 text-white rounded-full text-xl font-light flex items-center justify-center backdrop-blur-sm border border-white/30 hover:bg-white/30 transition active:scale-95 z-20"
+          >
+            +
+          </button>
 
-      <!-- Кнопка выбора фото -->
-      <button
-        @click="pickImage"
-        class="absolute bottom-4 right-4 z-20 w-8 h-8 bg-white/20 text-white rounded-full text-xl font-light flex items-center justify-center backdrop-blur-sm border border-white/30 hover:bg-white/30 transition active:scale-95"
-      >
-        +
-      </button>
+          <!-- Текст справа -->
+          <p class="text-[22px] font-semibold text-right text-white/90">
+            {{ totalDays }} дней
+          </p>
+        </div>
+      </div>
 
       <!-- Input -->
       <input
