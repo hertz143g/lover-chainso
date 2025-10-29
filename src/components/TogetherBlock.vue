@@ -1,72 +1,87 @@
 <template>
-  <section class="w-full max-w-[430px] mx-auto px-6 mt-10">
-    <h2 class="text-[20px] font-extrabold mb-3">Вместе уже:</h2>
+  <div class="px-5 mt-6">
+    <h2 class="text-xl font-bold mb-3">Вместе уже:</h2>
 
     <div
-      class="relative rounded-[28px] border-2 border-[#6a2b73]
-             bg-[#1a0a1d]/80 backdrop-blur p-5"
+      class="relative border border-purple-500/40 rounded-3xl p-5 min-h-[180px] flex flex-col justify-between overflow-hidden"
     >
-      <div class="text-[16px] opacity-90">{{ store.prettyDuration }}</div>
-      <div class="mt-16 text-right text-[20px] font-bold opacity-90">
-        {{ store.daysTogether }} дней
+      <!-- Фон с фото -->
+      <div
+        v-if="backgroundImage"
+        class="absolute inset-0 bg-center bg-cover"
+        :style="{ backgroundImage: `url(${backgroundImage})` }"
+      ></div>
+
+      <!-- Затемнение -->
+      <div
+        v-if="backgroundImage"
+        class="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+      ></div>
+
+      <!-- Контент -->
+      <div class="relative z-10 text-white/90">
+        <p class="text-[17px] leading-tight">
+          {{ togetherText }}
+        </p>
       </div>
 
+      <div class="relative z-10 flex justify-end">
+        <p class="text-lg font-semibold text-white/90">
+          {{ totalDays }} дней
+        </p>
+      </div>
+
+      <!-- Кнопка добавления фото -->
       <button
-        @click="openDate = true"
-        class="absolute -right-3 -top-3 w-10 h-10 rounded-full bg-white text-black
-               grid place-items-center text-xl shadow"
+        @click="pickImage"
+        class="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full text-black text-2xl font-light flex items-center justify-center shadow-md hover:scale-105 transition"
       >
         +
       </button>
-    </div>
 
-    <!-- модалка выбора даты -->
-    <transition name="fade">
-      <div
-        v-if="openDate"
-        class="fixed inset-0 bg-black/60 grid place-items-center p-6 z-50"
-        @click.self="openDate = false"
-      >
-        <div
-          class="w-full max-w-sm rounded-2xl bg-[#1a0a1d]
-                 border border-white/10 p-5"
-        >
-          <div class="text-lg font-semibold mb-3">
-            Дата начала отношений
-          </div>
-          <input
-            type="date"
-            v-model="store.state.startDate"
-            class="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2"
-          />
-          <div class="flex justify-end mt-4">
-            <button
-              @click="openDate = false"
-              class="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25"
-            >
-              Готово
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
-  </section>
+      <input
+        ref="fileInput"
+        type="file"
+        accept="image/*"
+        class="hidden"
+        @change="onFileChange"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useStore } from "@/store/useStore";
-const store = useStore();
-const openDate = ref(false);
+import { ref, computed } from 'vue'
+import { useStore } from '@/store/useStore'
+
+const store = useStore()
+const fileInput = ref(null)
+const backgroundImage = ref(store.state.bgImage || '')
+
+// пример: можно потом заменить на реальный расчёт
+const togetherText = computed(() => '1 год 5 месяцев 20 дней')
+const totalDays = computed(() => '538')
+
+function pickImage() {
+  fileInput.value?.click()
+}
+
+function onFileChange(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    backgroundImage.value = reader.result
+    store.state.bgImage = reader.result
+    localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
+  }
+  reader.readAsDataURL(file)
+}
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+/* плавное появление фона */
+div[style*="background-image"] {
+  transition: background-image 0.4s ease, opacity 0.4s ease;
 }
 </style>
