@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import Header from '@/components/Header.vue'
 import CoupleCircles from '@/components/CoupleCircles.vue'
 import TogetherBlock from '@/components/TogetherBlock.vue'
-import StatsGrid from '@/components/StatsGrid.vue'
+import StatsGrid from '@/components/WidgetsGrid.vue'
 import SettingsModal from '@/components/SettingsModal.vue'
 
 const showSettings = ref(false)
