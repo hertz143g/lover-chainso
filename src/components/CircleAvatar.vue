@@ -1,46 +1,24 @@
 <template>
   <div class="relative flex flex-col items-center select-none">
-    <!-- круг -->
     <div
-      class="relative rounded-full overflow-hidden flex items-center justify-center"
+      class="relative flex items-center justify-center rounded-full overflow-hidden neon-border"
       :style="{
         width: size + 'px',
         height: size + 'px',
-        border: '3px solid rgba(255,255,255,0.08)',
-        boxShadow: '0 0 60px 10px rgba(255,0,128,0.08)',
       }"
     >
+      <!-- Фото -->
       <img
         v-if="modelValue"
         :src="modelValue"
-        class="w-full h-full object-cover"
-        alt=""
+        class="absolute inset-0 w-full h-full object-cover"
       />
       <div v-else class="absolute inset-0 bg-[#2a2335]" />
 
-      <!-- кнопка добавления -->
-      <button
-        @click="pick"
-        class="absolute w-10 h-10 rounded-full bg-pink-500 grid place-items-center
-               text-2xl font-light border-4 border-[#12001a] shadow-lg z-50
-               hover:bg-pink-400 active:scale-95 transition"
-        :class="side === 'left'
-          ? 'bottom-0 right-0 translate-x-1/3 translate-y-1/3'
-          : 'bottom-0 left-0 -translate-x-1/3 translate-y-1/3'"
-      >
-        +
-      </button>
-
-      <input
-        ref="file"
-        type="file"
-        accept="image/*"
-        class="hidden"
-        @change="onFile"
-      />
+      <!-- Обводка неона -->
+      <div class="absolute inset-0 rounded-full neon-glow pointer-events-none"></div>
     </div>
 
-    <!-- подпись -->
     <div class="mt-3 text-base tracking-wide font-medium opacity-90">
       {{ label }}
     </div>
@@ -48,25 +26,54 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-
 const props = defineProps({
   modelValue: String,
   label: String,
-  side: { type: String, default: "right" }, // "left" или "right" — для позиционирования кнопки
   size: { type: Number, default: 220 },
-});
-const emit = defineEmits(["update:modelValue"]);
-const file = ref(null);
-
-function pick() {
-  file.value?.click();
-}
-function onFile(e) {
-  const f = e.target.files?.[0];
-  if (!f) return;
-  const r = new FileReader();
-  r.onload = () => emit("update:modelValue", r.result);
-  r.readAsDataURL(f);
-}
+})
 </script>
+
+<style scoped>
+/* Базовая обводка */
+.neon-border {
+  position: relative;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px 2px rgba(255, 0, 128, 0.2);
+}
+
+/* Динамическое свечение */
+.neon-glow::before,
+.neon-glow::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  filter: blur(25px);
+  background: conic-gradient(
+    from 0deg,
+    #ff4ec6,
+    #ff009d,
+    #a855f7,
+    #ff4ec6
+  );
+  animation: spin 6s linear infinite;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.neon-glow::after {
+  animation: pulse 3s ease-in-out infinite alternate;
+}
+
+/* Плавное вращение градиента */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* “Дыхание” свечения */
+@keyframes pulse {
+  0% { opacity: 0.3; transform: scale(0.96); }
+  100% { opacity: 0.8; transform: scale(1.04); }
+}
+</style>
