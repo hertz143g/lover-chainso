@@ -3,7 +3,7 @@
     <h2 class="text-xl font-bold mb-4">Вместе уже:</h2>
 
     <div
-      class="relative border border-purple-500/40 rounded-[28px] p-6 min-h-[240px] flex flex-col justify-between overflow-hidden"
+      class="relative border border-purple-500/40 rounded-[28px] overflow-hidden p-0 min-h-[250px] flex flex-col justify-between"
     >
       <!-- Фото -->
       <div
@@ -12,19 +12,21 @@
         :style="{ backgroundImage: `url(${backgroundImage})` }"
       ></div>
 
-      <!-- Затемнение (под цвет темы, без блюра) -->
+      <!-- Затемнение (поверх фото) -->
       <div
         v-if="backgroundImage"
         class="absolute inset-0 bg-[#12001a]/70"
       ></div>
 
-      <!-- Текст -->
-      <div class="relative z-10 flex flex-col justify-between h-full">
-        <p class="text-[18px] text-white/90">
+      <!-- Контент -->
+      <div class="relative z-10 flex flex-col justify-between h-full py-6 px-6">
+        <!-- Верхний текст -->
+        <p class="text-[18px] text-white/90 leading-snug">
           {{ togetherText }}
         </p>
 
-        <p class="text-[20px] font-semibold text-right text-white/90">
+        <!-- Нижний текст -->
+        <p class="text-[22px] font-semibold text-right text-white/90 mt-auto">
           {{ totalDays }} дней
         </p>
       </div>
@@ -37,7 +39,7 @@
         +
       </button>
 
-      <!-- инпут -->
+      <!-- input -->
       <input
         ref="fileInput"
         type="file"
@@ -57,7 +59,7 @@ const store = useStore()
 const fileInput = ref(null)
 const backgroundImage = ref(store.state.bgImage || '')
 
-// пример (можно будет позже сделать динамически)
+// временные данные
 const togetherText = computed(() => '1 год 5 месяцев 20 дней')
 const totalDays = computed(() => '538')
 
