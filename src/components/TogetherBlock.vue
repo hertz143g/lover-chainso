@@ -1,44 +1,43 @@
 <template>
-  <div class="px-5 mt-6">
-    <h2 class="text-xl font-bold mb-3">Вместе уже:</h2>
+  <div class="px-5 mt-10">
+    <h2 class="text-xl font-bold mb-4">Вместе уже:</h2>
 
     <div
-      class="relative border border-purple-500/40 rounded-3xl p-5 min-h-[180px] flex flex-col justify-between overflow-hidden"
+      class="relative border border-purple-500/40 rounded-[28px] p-6 min-h-[240px] flex flex-col justify-between overflow-hidden"
     >
-      <!-- Фон с фото -->
+      <!-- Фото -->
       <div
         v-if="backgroundImage"
         class="absolute inset-0 bg-center bg-cover"
         :style="{ backgroundImage: `url(${backgroundImage})` }"
       ></div>
 
-      <!-- Затемнение -->
+      <!-- Затемнение (под цвет темы, без блюра) -->
       <div
         v-if="backgroundImage"
-        class="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+        class="absolute inset-0 bg-[#12001a]/70"
       ></div>
 
-      <!-- Контент -->
-      <div class="relative z-10 text-white/90">
-        <p class="text-[17px] leading-tight">
+      <!-- Текст -->
+      <div class="relative z-10 flex flex-col justify-between h-full">
+        <p class="text-[18px] text-white/90">
           {{ togetherText }}
         </p>
-      </div>
 
-      <div class="relative z-10 flex justify-end">
-        <p class="text-lg font-semibold text-white/90">
+        <p class="text-[20px] font-semibold text-right text-white/90">
           {{ totalDays }} дней
         </p>
       </div>
 
-      <!-- Кнопка добавления фото -->
+      <!-- Кнопка выбора фото -->
       <button
         @click="pickImage"
-        class="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full text-black text-2xl font-light flex items-center justify-center shadow-md hover:scale-105 transition"
+        class="absolute -top-5 -right-5 w-11 h-11 bg-white text-black rounded-full text-2xl font-light flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition"
       >
         +
       </button>
 
+      <!-- инпут -->
       <input
         ref="fileInput"
         type="file"
@@ -58,7 +57,7 @@ const store = useStore()
 const fileInput = ref(null)
 const backgroundImage = ref(store.state.bgImage || '')
 
-// пример: можно потом заменить на реальный расчёт
+// пример (можно будет позже сделать динамически)
 const togetherText = computed(() => '1 год 5 месяцев 20 дней')
 const totalDays = computed(() => '538')
 
@@ -80,8 +79,7 @@ function onFileChange(e) {
 </script>
 
 <style scoped>
-/* плавное появление фона */
 div[style*="background-image"] {
-  transition: background-image 0.4s ease, opacity 0.4s ease;
+  transition: opacity 0.4s ease;
 }
 </style>
