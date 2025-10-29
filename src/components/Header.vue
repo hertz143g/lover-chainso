@@ -1,16 +1,20 @@
-<template>
-  <header
-    class="w-full max-w-[430px] mx-auto px-6 pt-6 pb-2 flex items-center justify-between select-none relative z-50"
-  >
-    <button class="text-[13px] opacity-75 hover:opacity-100">магазин</button>
+<script setup>
+import { defineEmits } from 'vue'
 
-    <h1 class="text-[22px] font-extrabold tracking-tight">
-      <span class="text-pink-400">LOVER</span> CHAINSO
+const emit = defineEmits(['open-settings'])
+</script>
+
+<template>
+  <header class="flex justify-between items-center px-6 py-4 text-sm text-gray-300">
+    <span>магазин</span>
+
+    <h1 class="text-xl font-bold">
+      <span class="text-pink-500">LOVER</span> CHAINSO
     </h1>
 
     <button
-      class="text-[13px] opacity-75 hover:opacity-100"
-      @click="$emit('open-settings')"
+      @click="emit('open-settings')"
+      class="hover:text-white transition-colors"
     >
       настройки
     </button>
