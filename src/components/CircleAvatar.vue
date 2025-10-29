@@ -39,15 +39,14 @@ const displayImage = computed(() => props.modelValue || props.image)
 /* 💥 чистый glow на box-shadow — его Vercel не режет */
 .neon-border {
   box-shadow:
-    0 0 10px 3px rgba(255, 0, 122, 0.3),
-    0 0 20px 6px rgba(168, 85, 247, 0.25),
-    0 0 40px 10px rgba(255, 0, 200, 0.15);
+    0 0 6px 2px rgba(255, 0, 122, 0.4),
+    0 0 12px 4px rgba(168, 85, 247, 0.3);
 }
 
 .neon-border::before {
   box-shadow:
-    0 0 15px 4px rgba(255, 0, 122, 0.4),
-    0 0 30px 8px rgba(168, 85, 247, 0.35);
+    0 0 8px 3px rgba(255, 0, 122, 0.4),
+    0 0 16px 6px rgba(168, 85, 247, 0.35);
 }
 
 @keyframes neonPulse {
