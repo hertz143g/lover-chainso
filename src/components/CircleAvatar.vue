@@ -1,19 +1,19 @@
 <template>
   <div class="relative flex flex-col items-center select-none">
     <div
-      class="relative flex items-center justify-center rounded-full overflow-hidden"
+      class="relative flex items-center justify-center rounded-full overflow-hidden neon-border"
       :style="{ width: size + 'px', height: size + 'px' }"
     >
-      <!-- 💥 мощное свечение позади -->
-      <div class="neon-bg"></div>
-
       <!-- Фото -->
       <img
         v-if="displayImage"
         :src="displayImage"
         class="absolute inset-0 w-full h-full object-cover rounded-full z-10"
       />
-      <div v-else class="absolute inset-0 bg-[#2a2335] rounded-full z-10" />
+      <div
+        v-else
+        class="absolute inset-0 bg-[#2a2335] rounded-full z-10"
+      ></div>
     </div>
 
     <div class="mt-3 text-base tracking-wide font-medium opacity-90">
@@ -35,42 +35,40 @@ const props = defineProps({
 const displayImage = computed(() => props.modelValue || props.image)
 </script>
 
-<style scoped>
-.neon-bg {
-  position: absolute;
-  inset: -15px;
+<style>
+/* 💥 чистый glow на box-shadow — его Vercel не режет */
+.neon-border {
+  position: relative;
   border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    #ff007a,
-    #ff4dd2,
-    #a855f7,
-    #ff007a
-  );
-  filter: blur(50px) brightness(2);
-  opacity: 0.85;
-  animation: spin 5s linear infinite, pulse 2s ease-in-out infinite alternate;
+  box-shadow:
+    0 0 25px 8px rgba(255, 0, 122, 0.4),
+    0 0 60px 15px rgba(168, 85, 247, 0.3),
+    0 0 120px 25px rgba(255, 0, 200, 0.2);
+  transition: all 0.5s ease-in-out;
+  z-index: 1;
+}
+
+/* эффект дыхания */
+.neon-border::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 35px 10px rgba(255, 0, 122, 0.5),
+    0 0 80px 20px rgba(168, 85, 247, 0.4);
+  animation: neonPulse 3s ease-in-out infinite alternate;
   z-index: 0;
 }
 
-/* анимации вращения и дыхания */
-@keyframes spin {
+@keyframes neonPulse {
   0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    filter: blur(35px) brightness(1.3);
     opacity: 0.6;
+    transform: scale(0.98);
   }
   100% {
-    filter: blur(55px) brightness(2);
     opacity: 1;
+    transform: scale(1.03);
   }
 }
 </style>
