@@ -1,24 +1,21 @@
 <template>
   <div class="relative flex flex-col items-center select-none">
-    <!-- Контейнер с неоном -->
     <div
       class="relative flex items-center justify-center rounded-full overflow-hidden neon-ring"
       :style="{ width: size + 'px', height: size + 'px' }"
     >
-      <!-- 💡 Сначала свечение -->
-      <div class="absolute inset-0 rounded-full pointer-events-none neon-anim z-0"></div>
+      <!-- 🔥 Неон позади фото -->
+      <div class="absolute inset-0 rounded-full neon-glow"></div>
 
-      <!-- 📸 Фото поверх свечения -->
+      <!-- 📸 Фото -->
       <img
         v-if="displayImage"
         :src="displayImage"
-        class="absolute inset-0 w-full h-full object-cover z-10"
-        alt=""
+        class="absolute inset-0 w-full h-full object-cover z-10 rounded-full"
       />
-      <div v-else class="absolute inset-0 bg-[#2a2335] z-10" />
+      <div v-else class="absolute inset-0 bg-[#2a2335] z-10 rounded-full" />
     </div>
 
-    <!-- подпись -->
     <div class="mt-3 text-base tracking-wide font-medium opacity-90">
       {{ label }}
     </div>
@@ -32,46 +29,52 @@ const props = defineProps({
   modelValue: { type: String, default: '' },
   image: { type: String, default: '' },
   label: { type: String, default: '' },
-  side: { type: String, default: 'right' },
   size: { type: Number, default: 200 },
 })
 
-/* если картинка есть — показываем */
 const displayImage = computed(() => props.modelValue || props.image)
 </script>
 
 <style scoped>
 .neon-ring {
-  border: 2px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 0 20px 4px rgba(255, 0, 128, 0.08);
-  background: radial-gradient(circle at center, #20132b 60%, transparent);
   position: relative;
+  border-radius: 50%;
 }
 
-/* 🟣 неоновое свечение под фото */
-.neon-anim {
-  background: conic-gradient(from 0deg, #ff009d, #a855f7, #ff4ec6, #ff009d);
-  filter: blur(25px);
-  opacity: 0.55;
-  animation: spin 6s linear infinite, pulse 3s ease-in-out infinite alternate;
+/* ✨ Яркое свечение под фото */
+.neon-glow {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #ff007a,
+    #ff4dd2,
+    #a855f7,
+    #ff007a
+  );
+  opacity: 0.9;
+  filter: blur(35px) brightness(1.4);
+  animation: spin 5s linear infinite, pulse 2.5s ease-in-out infinite alternate;
+  z-index: 0;
 }
 
-/* плавное вращение */
+/* Крутится плавно */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* дыхание */
+/* "Дыхание" свечения */
 @keyframes pulse {
   0% {
-    opacity: 0.35;
-    transform: scale(0.9);
+    opacity: 0.7;
+    filter: blur(25px) brightness(1);
   }
   100% {
-    opacity: 0.8;
-    transform: scale(1.1);
+    opacity: 1;
+    filter: blur(45px) brightness(1.6);
   }
 }
 </style>
