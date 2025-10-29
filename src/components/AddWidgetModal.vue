@@ -19,6 +19,23 @@
         class="w-full mb-6 px-4 py-2 bg-transparent border border-white/20 rounded-full focus:border-pink-500 outline-none"
       />
 
+      <!-- выбор цвета -->
+      <div class="mb-6">
+        <p class="text-sm mb-2 opacity-70">Цвет виджета:</p>
+        <div class="flex justify-between">
+          <div
+            v-for="color in colors"
+            :key="color"
+            class="w-8 h-8 rounded-full cursor-pointer border-2 transition"
+            :class="{
+              'scale-110 border-white': form.color === color
+            }"
+            :style="{ backgroundColor: color }"
+            @click="form.color = color"
+          ></div>
+        </div>
+      </div>
+
       <button
         @click="save"
         class="w-full py-2 rounded-full bg-pink-500 hover:bg-pink-400 transition"
@@ -33,13 +50,21 @@
 import { ref } from 'vue'
 import { useStore } from '@/store/useStore'
 
+const emit = defineEmits(['close'])
 const store = useStore()
-const form = ref({ date: '', title: '' })
+
+const form = ref({
+  date: '',
+  title: '',
+  color: '#ec4899', // по умолчанию розовый
+})
+
+const colors = ['#ec4899', '#8b5cf6', '#06b6d4', '#f59e0b']
 
 function save() {
   if (!form.value.date || !form.value.title) return
   store.addWidget({ ...form.value })
-  form.value = { date: '', title: '' }
+  form.value = { date: '', title: '', color: '#ec4899' }
   setTimeout(() => emit('close'), 200)
 }
 </script>

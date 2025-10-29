@@ -6,10 +6,16 @@
       <div
         v-for="(widget, index) in store.state.widgets"
         :key="index"
-        class="rounded-2xl border border-pink-400/30 bg-white/5 p-4 shadow-[0_0_15px_rgba(255,0,122,0.15)] hover:shadow-[0_0_25px_rgba(255,0,200,0.3)] transition"
+        class="rounded-2xl p-4 bg-white/5 border transition duration-300 hover:scale-[1.02]"
+        :style="{
+          borderColor: widget.color + '55',
+          boxShadow: `0 0 15px ${widget.color}40`
+        }"
       >
-        <p class="text-sm text-pink-300 mb-2">{{ widget.date }}</p>
-        <p class="font-medium">{{ widget.title }}</p>
+        <p class="text-sm mb-2" :style="{ color: widget.color }">
+          {{ widget.date }}
+        </p>
+        <p class="font-medium text-white">{{ widget.title }}</p>
       </div>
     </div>
 
