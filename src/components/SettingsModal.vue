@@ -87,7 +87,7 @@
           <!-- кнопка -->
           <div class="flex justify-end">
             <button
-              @click="save"
+              @click.prevent="save"
               class="px-6 py-2 rounded-full bg-white/20 border border-white/30 hover:bg-white/30 transition active:scale-95"
             >
               Сохранить
@@ -148,9 +148,14 @@ function onFileChange(e) {
   reader.readAsDataURL(file)
 }
 
+// ✅ Исправленная логика сохранения
 function save() {
-  store.setName1(form.value.name1)
-  store.setName2(form.value.name2)
+  if (form.value.name1) store.setName1(form.value.name1)
+  if (form.value.name2) store.setName2(form.value.name2)
+  if (photoSelf.value) store.setPhoto1(photoSelf.value)
+  if (photoPartner.value) store.setPhoto2(photoPartner.value)
+
+  // плавное закрытие
   setTimeout(() => emit('close'), 250)
 }
 

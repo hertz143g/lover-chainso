@@ -4,7 +4,8 @@
       <!-- левый круг -->
       <div class="absolute left-2 top-8 z-20">
         <CircleAvatar
-          :image="store.state.photo1"
+          :model-value="store.state.photo1"  
+          :image="store.state.photo1"        
           :label="store.state.name1 || 'Вы'"
           :size="200"
           side="left"
@@ -14,6 +15,7 @@
       <!-- правый круг -->
       <div class="absolute right-2 bottom-4 z-10">
         <CircleAvatar
+          :model-value="store.state.photo2"
           :image="store.state.photo2"
           :label="store.state.name2 || 'Партнёр'"
           :size="200"

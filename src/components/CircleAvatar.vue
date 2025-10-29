@@ -1,22 +1,20 @@
 <template>
   <div class="relative flex flex-col items-center select-none">
     <div
-      class="relative flex items-center justify-center rounded-full overflow-hidden neon-border"
-      :style="{
-        width: size + 'px',
-        height: size + 'px',
-      }"
+      class="relative flex items-center justify-center rounded-full overflow-hidden neon-ring"
+      :style="{ width: size + 'px', height: size + 'px' }"
     >
       <!-- Фото -->
       <img
-        v-if="modelValue"
-        :src="modelValue"
+        v-if="displayImage"
+        :src="displayImage"
         class="absolute inset-0 w-full h-full object-cover"
+        alt=""
       />
       <div v-else class="absolute inset-0 bg-[#2a2335]" />
 
-      <!-- Обводка неона -->
-      <div class="absolute inset-0 rounded-full neon-glow pointer-events-none"></div>
+      <!-- мягкое свечение -->
+      <div class="absolute inset-0 rounded-full pointer-events-none neon-anim"></div>
     </div>
 
     <div class="mt-3 text-base tracking-wide font-medium opacity-90">
@@ -26,54 +24,29 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
-  modelValue: String,
-  label: String,
-  size: { type: Number, default: 220 },
+  /* старый способ через v-model */
+  modelValue: { type: String, default: '' },
+  /* новый способ явным пропом */
+  image: { type: String, default: '' },
+  label: { type: String, default: '' },
+  side: { type: String, default: 'right' },
+  size: { type: Number, default: 200 }
 })
+
+/* Берём то, что есть: сперва modelValue, потом image */
+const displayImage = computed(() => props.modelValue || props.image)
 </script>
 
 <style scoped>
-/* Базовая обводка */
-.neon-border {
-  position: relative;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 20px 2px rgba(255, 0, 128, 0.2);
+.neon-ring { border: 2px solid rgba(255,255,255,0.06); box-shadow: 0 0 20px 4px rgba(255,0,128,0.08); background: radial-gradient(circle at center, #20132b 60%, transparent); }
+.neon-anim::before {
+  content:""; position:absolute; inset:-10px; border-radius:50%;
+  background: conic-gradient(from 0deg,#ff009d,#a855f7,#ff4ec6,#ff009d);
+  filter: blur(20px); opacity:.6; animation: spin 6s linear infinite, pulse 3s ease-in-out infinite alternate;
 }
-
-/* Динамическое свечение */
-.neon-glow::before,
-.neon-glow::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  filter: blur(25px);
-  background: conic-gradient(
-    from 0deg,
-    #ff4ec6,
-    #ff009d,
-    #a855f7,
-    #ff4ec6
-  );
-  animation: spin 6s linear infinite;
-  opacity: 0.5;
-  z-index: -1;
-}
-
-.neon-glow::after {
-  animation: pulse 3s ease-in-out infinite alternate;
-}
-
-/* Плавное вращение градиента */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* “Дыхание” свечения */
-@keyframes pulse {
-  0% { opacity: 0.3; transform: scale(0.96); }
-  100% { opacity: 0.8; transform: scale(1.04); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0% {opacity:.35; transform:scale(.97);} 100% {opacity:.8; transform:scale(1.04);} }
 </style>
