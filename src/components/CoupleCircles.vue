@@ -2,11 +2,12 @@
   <section class="w-full max-w-[430px] mx-auto mt-6 px-6">
     <div class="relative flex justify-center items-center h-[260px]">
       <!-- левый круг -->
-      <div class="absolute left-2 top-10 z-20">
+      <div class="absolute left-2 top-8 z-20">
         <CircleAvatar
           v-model="store.state.youAvatar"
           :label="store.state.youName"
           :size="200"
+          side="left"
         />
       </div>
 
@@ -16,6 +17,7 @@
           v-model="store.state.partnerAvatar"
           :label="store.state.partnerName"
           :size="200"
+          side="right"
         />
       </div>
     </div>
