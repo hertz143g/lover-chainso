@@ -4,13 +4,14 @@
 
     <div class="grid grid-cols-2 gap-4">
       <div
-        v-for="(widget, index) in store.state.widgets"
-        :key="index"
-        class="rounded-2xl p-4 bg-white/5 border transition duration-300 hover:scale-[1.02]"
+        v-for="widget in store.state.widgets"
+        :key="widget.id"
+        class="rounded-2xl p-4 bg-white/5 border transition duration-300 hover:scale-[1.02] cursor-pointer"
         :style="{
           borderColor: widget.color + '55',
           boxShadow: `0 0 15px ${widget.color}40`
         }"
+        @click="openEdit(widget)"
       >
         <p class="text-sm mb-2" :style="{ color: widget.color }">
           {{ widget.date }}
@@ -27,6 +28,11 @@
     </button>
 
     <AddWidgetModal v-if="showAdd" @close="showAdd = false" />
+    <EditWidgetModal
+      v-if="editWidget"
+      :widget="editWidget"
+      @close="editWidget = null"
+    />
   </section>
 </template>
 
@@ -34,7 +40,13 @@
 import { ref } from 'vue'
 import { useStore } from '@/store/useStore'
 import AddWidgetModal from './AddWidgetModal.vue'
+import EditWidgetModal from './EditWidgetModal.vue'
 
 const store = useStore()
 const showAdd = ref(false)
+const editWidget = ref(null)
+
+function openEdit(widget) {
+  editWidget.value = { ...widget }
+}
 </script>
