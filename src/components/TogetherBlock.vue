@@ -1,52 +1,36 @@
+<!-- TogetherBlock.vue -->
 <template>
   <div class="px-5 mt-10">
     <h2 class="text-xl font-bold mb-4">Вместе уже:</h2>
 
-    <div
-      class="relative border border-purple-500/40 rounded-[28px] overflow-hidden min-h-[260px]"
-    >
+    <div class="relative rounded-[28px] overflow-hidden border border-purple-500/40 min-h-[260px]">
       <!-- Фото -->
       <div
         v-if="backgroundImage"
         class="absolute inset-0 bg-center bg-cover"
         :style="{ backgroundImage: `url(${backgroundImage})` }"
-      ></div>
-
-      <!-- Затемнение -->
-      <div class="absolute inset-0 bg-[#12001a]/70 pointer-events-none"></div>
-
-      <!-- Контент -->
-      <div class="relative z-10 w-full h-full flex flex-col justify-between">
-        <!-- Верх -->
-        <p class="text-[18px] text-white/90 leading-snug pt-5 px-5">
-          {{ togetherText }}
-        </p>
-
-        <!-- Низ -->
-        <div class="flex justify-between items-end pb-4 px-5">
-          <!-- Кнопка выбора фото -->
-          <button
-            @click="pickImage"
-            class="w-8 h-8 bg-white/20 text-white rounded-full text-xl font-light flex items-center justify-center backdrop-blur-sm border border-white/30 hover:bg-white/30 transition active:scale-95 z-20"
-          >
-            +
-          </button>
-
-          <!-- Текст справа -->
-          <p class="text-[22px] font-semibold text-right text-white/90">
-            {{ totalDays }} дней
-          </p>
-        </div>
-      </div>
-
-      <!-- Input -->
-      <input
-        ref="fileInput"
-        type="file"
-        accept="image/*"
-        class="hidden"
-        @change="onFileChange"
       />
+      <!-- Затемнение под тему -->
+      <div class="absolute inset-0 bg-[#12001a]/70 pointer-events-none" />
+
+      <!-- Текст сверху слева -->
+      <p class="absolute top-5 left-5 z-20 text-[18px] text-white/90">
+        {{ togetherText }}
+      </p>
+
+      <!-- Текст СНИЗУ СПРАВА -->
+      <p class="absolute bottom-4 right-5 z-20 text-[22px] font-semibold text-white/90">
+        {{ totalDays }} дней
+      </p>
+
+      <!-- Кнопка СНИЗУ СЛЕВА -->
+      <button
+        @click="pickImage"
+        class="absolute bottom-4 left-4 z-20 w-8 h-8 rounded-full border border-white/30 bg-white/20 text-white text-xl flex items-center justify-center backdrop-blur-sm hover:bg-white/30 active:scale-95 transition"
+      >+</button>
+
+      <!-- file input -->
+      <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="onFileChange" />
     </div>
   </div>
 </template>
@@ -62,25 +46,15 @@ const backgroundImage = ref(store.state.bgImage || '')
 const togetherText = computed(() => '1 год 5 месяцев 20 дней')
 const totalDays = computed(() => '538')
 
-function pickImage() {
-  fileInput.value?.click()
-}
-
-function onFileChange(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = () => {
-    backgroundImage.value = reader.result
-    store.state.bgImage = reader.result
+function pickImage(){ fileInput.value?.click() }
+function onFileChange(e){
+  const f = e.target.files?.[0]; if(!f) return
+  const r = new FileReader()
+  r.onload = () => {
+    backgroundImage.value = r.result
+    store.state.bgImage = r.result
     localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
   }
-  reader.readAsDataURL(file)
+  r.readAsDataURL(f)
 }
 </script>
-
-<style scoped>
-div[style*="background-image"] {
-  transition: opacity 0.4s ease;
-}
-</style>
