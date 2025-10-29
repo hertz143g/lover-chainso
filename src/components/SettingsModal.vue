@@ -39,7 +39,7 @@
             <div class="flex justify-between items-center mt-5">
               <div class="flex flex-col items-center">
                 <div
-                  class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-purple-500/40 bg-white/10 flex items-center justify-center hover:scale-105 transition"
+                  class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-purple-500/40 bg-white/10 flex items-center justify-center hover:scale-105 transition cursor-pointer"
                   @click="pickImage('self')"
                 >
                   <img
@@ -54,7 +54,7 @@
 
               <div class="flex flex-col items-center">
                 <div
-                  class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-purple-500/40 bg-white/10 flex items-center justify-center hover:scale-105 transition"
+                  class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-purple-500/40 bg-white/10 flex items-center justify-center hover:scale-105 transition cursor-pointer"
                   @click="pickImage('partner')"
                 >
                   <img
@@ -92,22 +92,33 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref, watch, defineProps, defineEmits } from 'vue'
 import { useStore } from '@/store/useStore'
 
 const emit = defineEmits(['close'])
 const props = defineProps({ show: Boolean })
 const store = useStore()
-const form = ref({
-  name1: store.state.name1 || '',
-  name2: store.state.name2 || '',
-})
 
-const photoSelf = ref(store.state.photo1 || '')
-const photoPartner = ref(store.state.photo2 || '')
+// локальное состояние формы
+const form = ref({ name1: '', name2: '' })
+const photoSelf = ref('')
+const photoPartner = ref('')
 
 const fileInput = ref(null)
 let currentType = null
+
+// следим за открытием модалки, чтобы каждый раз подтягивать данные
+watch(
+  () => props.show,
+  (val) => {
+    if (val) {
+      form.value.name1 = store.state.name1 || ''
+      form.value.name2 = store.state.name2 || ''
+      photoSelf.value = store.state.photo1 || ''
+      photoPartner.value = store.state.photo2 || ''
+    }
+  }
+)
 
 function pickImage(type) {
   currentType = type
@@ -126,7 +137,7 @@ function onFileChange(e) {
       photoPartner.value = reader.result
       store.state.photo2 = reader.result
     }
-    localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
+    saveToLocalStorage()
   }
   reader.readAsDataURL(file)
 }
@@ -134,8 +145,12 @@ function onFileChange(e) {
 function save() {
   store.state.name1 = form.value.name1
   store.state.name2 = form.value.name2
+  saveToLocalStorage()
+  setTimeout(() => emit('close'), 250)
+}
+
+function saveToLocalStorage() {
   localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
-  setTimeout(() => emit('close'), 200)
 }
 
 function close() {
