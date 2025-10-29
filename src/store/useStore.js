@@ -22,7 +22,8 @@ function updateWidget(id, newData) {
   if (i !== -1) state.widgets[i] = { ...state.widgets[i], ...newData }
 }
 function deleteWidget(id) {
-  state.widgets = state.widgets.filter(w => w.id !== id)
+  const idx = state.widgets.findIndex(w => w.id === id)
+  if (idx !== -1) state.widgets.splice(idx, 1)
 }
 
 export function useStore() {
