@@ -1,156 +1,134 @@
 <template>
-  <div
-    class="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm grid place-items-center p-6"
-    @click.self="$emit('close')"
-  >
+  <!-- затемнение фона -->
+  <transition name="fade">
     <div
-      class="w-full max-w-sm bg-[#1b0d23] border border-white/10 rounded-3xl overflow-hidden animate-fadeIn"
+      v-if="show"
+      class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+      @click.self="close"
     >
-      <!-- Заголовок -->
-      <div
-        class="px-5 py-4 text-[22px] tracking-wide border-b border-white/10 flex justify-between items-center"
-      >
-        <span>настройки пары</span>
-        <button
-          @click="$emit('close')"
-          class="text-white/60 hover:text-white transition"
+      <!-- модалка -->
+      <transition name="scale">
+        <div
+          v-if="show"
+          class="bg-[#1a0024] border border-purple-600/40 rounded-[24px] p-6 w-[90%] max-w-[420px] text-white shadow-2xl"
         >
-          ✕
-        </button>
-      </div>
+          <h2 class="text-xl font-semibold mb-4 text-center">
+            Настройки
+          </h2>
 
-      <!-- Форма -->
-      <form class="p-5 space-y-6" @submit.prevent="save">
-        <!-- Ваше имя -->
-        <div class="space-y-2">
-          <label class="text-sm opacity-80">ваше имя:</label>
-          <input
-            v-model="form.youName"
-            type="text"
-            placeholder="например, Иван"
-            class="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2 focus:border-pink-500 outline-none transition"
-          />
-        </div>
-
-        <!-- Имя партнёра -->
-        <div class="space-y-2">
-          <label class="text-sm opacity-80">имя партнёра:</label>
-          <input
-            v-model="form.partnerName"
-            type="text"
-            placeholder="например, Ксения"
-            class="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2 focus:border-pink-500 outline-none transition"
-          />
-        </div>
-
-        <!-- Фото в два столбца -->
-        <div class="grid grid-cols-2 gap-6 mt-6">
-          <!-- Фото 1 -->
-          <div class="space-y-2">
-            <label class="block text-sm opacity-80 text-center">ваше фото</label>
-            <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden border border-white/20">
-              <img
-                v-if="form.youAvatar"
-                :src="form.youAvatar"
-                class="object-cover w-full h-full"
+          <div class="space-y-3">
+            <div>
+              <label class="text-sm text-white/70">Ваше имя:</label>
+              <input
+                v-model="form.name1"
+                type="text"
+                class="w-full mt-1 rounded-xl bg-white/10 border border-white/20 px-3 py-2 focus:outline-none focus:border-purple-400 transition"
               />
-              <button
-                type="button"
-                @click="pick('you')"
-                class="absolute inset-0 bg-black/40 hover:bg-black/30 flex items-center justify-center text-pink-400 text-2xl"
-              >
-                📷
-              </button>
+            </div>
+
+            <div>
+              <label class="text-sm text-white/70">Имя партнёра:</label>
+              <input
+                v-model="form.name2"
+                type="text"
+                class="w-full mt-1 rounded-xl bg-white/10 border border-white/20 px-3 py-2 focus:outline-none focus:border-purple-400 transition"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-3">
+              <div>
+                <label class="text-sm text-white/70">Ваше фото:</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="block w-full text-xs mt-1"
+                  @change="onFileChange('self', $event)"
+                />
+              </div>
+
+              <div>
+                <label class="text-sm text-white/70">Фото партнёра:</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="block w-full text-xs mt-1"
+                  @change="onFileChange('partner', $event)"
+                />
+              </div>
             </div>
           </div>
 
-          <!-- Фото 2 -->
-          <div class="space-y-2">
-            <label class="block text-sm opacity-80 text-center">фото партнёра</label>
-            <div class="relative w-24 h-24 mx-auto rounded-full overflow-hidden border border-white/20">
-              <img
-                v-if="form.partnerAvatar"
-                :src="form.partnerAvatar"
-                class="object-cover w-full h-full"
-              />
-              <button
-                type="button"
-                @click="pick('partner')"
-                class="absolute inset-0 bg-black/40 hover:bg-black/30 flex items-center justify-center text-pink-400 text-2xl"
-              >
-                📷
-              </button>
-            </div>
+          <div class="flex justify-end mt-6">
+            <button
+              @click="save"
+              class="px-6 py-2 rounded-full bg-white/20 border border-white/30 hover:bg-white/30 transition active:scale-95"
+            >
+              Сохранить
+            </button>
           </div>
         </div>
-
-        <!-- Кнопка сохранить -->
-        <div class="flex justify-end pt-4">
-          <button
-            class="px-5 py-3 rounded-xl bg-pink-600 hover:bg-pink-500 font-medium transition"
-          >
-            сохранить
-          </button>
-        </div>
-      </form>
+      </transition>
     </div>
-
-    <!-- скрытые инпуты для фото -->
-    <input ref="youInput" type="file" accept="image/*" class="hidden" @change="onFile($event, 'you')" />
-    <input ref="partnerInput" type="file" accept="image/*" class="hidden" @change="onFile($event, 'partner')" />
-  </div>
+  </transition>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, defineEmits, defineProps } from 'vue'
 import { useStore } from '@/store/useStore'
-const store = useStore()
-const youInput = ref(null)
-const partnerInput = ref(null)
 
+const emit = defineEmits(['close'])
+const props = defineProps({ show: Boolean })
+const store = useStore()
 const form = ref({
-  youName: store.state.youName,
-  partnerName: store.state.partnerName,
-  youAvatar: store.state.youAvatar,
-  partnerAvatar: store.state.partnerAvatar,
+  name1: store.state.name1 || '',
+  name2: store.state.name2 || '',
 })
 
-function pick(which) {
-  if (which === 'you') youInput.value?.click()
-  else partnerInput.value?.click()
-}
-
-function onFile(e, which) {
-  const f = e.target.files?.[0]
-  if (!f) return
-  const r = new FileReader()
-  r.onload = () => {
-    form.value[which === 'you' ? 'youAvatar' : 'partnerAvatar'] = r.result
-  }
-  r.readAsDataURL(f)
-}
-
-function save() {
-  Object.assign(store.state, form.value)
-  localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
+function close() {
   emit('close')
 }
 
-const emit = defineEmits(['close'])
+function save() {
+  store.state.name1 = form.value.name1
+  store.state.name2 = form.value.name2
+  localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
+
+  // плавное закрытие
+  setTimeout(() => emit('close'), 200)
+}
+
+function onFileChange(type, e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    store.state[type === 'self' ? 'photo1' : 'photo2'] = reader.result
+    localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
+  }
+  reader.readAsDataURL(file)
+}
 </script>
 
 <style scoped>
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
-.animate-fadeIn {
-  animation: fadeIn 0.25s ease;
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.25s ease;
+}
+.scale-enter-from {
+  transform: scale(0.9);
+  opacity: 0;
+}
+.scale-leave-to {
+  transform: scale(0.95);
+  opacity: 0;
 }
 </style>
