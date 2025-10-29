@@ -1,12 +1,10 @@
 <template>
-  <!-- затемнение фона -->
   <transition name="fade">
     <div
       v-if="show"
       class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
       @click.self="close"
     >
-      <!-- модалка -->
       <transition name="scale">
         <div
           v-if="show"
@@ -16,7 +14,8 @@
             Настройки
           </h2>
 
-          <div class="space-y-3">
+          <div class="space-y-4">
+            <!-- имя 1 -->
             <div>
               <label class="text-sm text-white/70">Ваше имя:</label>
               <input
@@ -26,6 +25,7 @@
               />
             </div>
 
+            <!-- имя 2 -->
             <div>
               <label class="text-sm text-white/70">Имя партнёра:</label>
               <input
@@ -35,28 +35,47 @@
               />
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mt-3">
-              <div>
-                <label class="text-sm text-white/70">Ваше фото:</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  class="block w-full text-xs mt-1"
-                  @change="onFileChange('self', $event)"
-                />
+            <!-- два круглых фото -->
+            <div class="flex justify-between items-center mt-5">
+              <div class="flex flex-col items-center">
+                <div
+                  class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-purple-500/40 bg-white/10 flex items-center justify-center hover:scale-105 transition"
+                  @click="pickImage('self')"
+                >
+                  <img
+                    v-if="photoSelf"
+                    :src="photoSelf"
+                    class="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <span v-else class="text-2xl text-white/70">+</span>
+                </div>
+                <p class="text-xs mt-2 text-white/60">Ваше фото</p>
               </div>
 
-              <div>
-                <label class="text-sm text-white/70">Фото партнёра:</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  class="block w-full text-xs mt-1"
-                  @change="onFileChange('partner', $event)"
-                />
+              <div class="flex flex-col items-center">
+                <div
+                  class="relative w-24 h-24 rounded-full overflow-hidden border-2 border-purple-500/40 bg-white/10 flex items-center justify-center hover:scale-105 transition"
+                  @click="pickImage('partner')"
+                >
+                  <img
+                    v-if="photoPartner"
+                    :src="photoPartner"
+                    class="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <span v-else class="text-2xl text-white/70">+</span>
+                </div>
+                <p class="text-xs mt-2 text-white/60">Фото партнёра</p>
               </div>
             </div>
           </div>
+
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            class="hidden"
+            @change="onFileChange"
+          />
 
           <div class="flex justify-end mt-6">
             <button
@@ -73,7 +92,7 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, defineProps } from 'vue'
+import { ref, defineProps, defineEmits } from 'vue'
 import { useStore } from '@/store/useStore'
 
 const emit = defineEmits(['close'])
@@ -84,28 +103,43 @@ const form = ref({
   name2: store.state.name2 || '',
 })
 
-function close() {
-  emit('close')
+const photoSelf = ref(store.state.photo1 || '')
+const photoPartner = ref(store.state.photo2 || '')
+
+const fileInput = ref(null)
+let currentType = null
+
+function pickImage(type) {
+  currentType = type
+  fileInput.value?.click()
+}
+
+function onFileChange(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    if (currentType === 'self') {
+      photoSelf.value = reader.result
+      store.state.photo1 = reader.result
+    } else {
+      photoPartner.value = reader.result
+      store.state.photo2 = reader.result
+    }
+    localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
+  }
+  reader.readAsDataURL(file)
 }
 
 function save() {
   store.state.name1 = form.value.name1
   store.state.name2 = form.value.name2
   localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
-
-  // плавное закрытие
   setTimeout(() => emit('close'), 200)
 }
 
-function onFileChange(type, e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = () => {
-    store.state[type === 'self' ? 'photo1' : 'photo2'] = reader.result
-    localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(store.state))
-  }
-  reader.readAsDataURL(file)
+function close() {
+  emit('close')
 }
 </script>
 
