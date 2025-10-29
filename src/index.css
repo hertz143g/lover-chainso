@@ -1,16 +1,5 @@
 @import "tailwindcss";
 
-:root {
-  color-scheme: dark;
-}
-
-html, body, #app {
-  height: 100%;
-}
-
-body {
-  background-color: #100014;
-  color: white;
-  font-family: system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
+:root { color-scheme: dark; }
+html, body, #app { height: 100%; }
+body { background:#12001a; color:white; -webkit-font-smoothing:antialiased; }
