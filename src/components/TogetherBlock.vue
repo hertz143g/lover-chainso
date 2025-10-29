@@ -3,7 +3,7 @@
     <h2 class="text-xl font-bold mb-4">Вместе уже:</h2>
 
     <div
-      class="relative border border-purple-500/40 rounded-[28px] overflow-hidden min-h-[250px] flex flex-col justify-between"
+      class="relative border border-purple-500/40 rounded-[28px] overflow-hidden min-h-[260px]"
     >
       <!-- Фото -->
       <div
@@ -14,18 +14,17 @@
 
       <!-- Затемнение -->
       <div
-        v-if="backgroundImage"
-        class="absolute inset-0 bg-[#12001a]/70"
+        class="absolute inset-0 bg-[#12001a]/65 pointer-events-none"
       ></div>
 
       <!-- Контент -->
-      <div class="relative z-10 flex flex-col justify-between h-full">
-        <!-- Верхний текст -->
-        <p class="text-[18px] text-white/90 leading-snug pt-5 pl-5">
+      <div class="relative z-10 w-full h-full flex flex-col justify-between">
+        <!-- Верх -->
+        <p class="text-[18px] text-white/90 leading-snug pt-5 px-5">
           {{ togetherText }}
         </p>
 
-        <!-- Нижний текст -->
+        <!-- Низ -->
         <p class="text-[22px] font-semibold text-right text-white/90 pb-5 pr-5">
           {{ totalDays }} дней
         </p>
@@ -34,12 +33,12 @@
       <!-- Кнопка выбора фото -->
       <button
         @click="pickImage"
-        class="absolute -top-5 -right-5 w-11 h-11 bg-white text-black rounded-full text-2xl font-light flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition"
+        class="absolute top-3 right-3 z-20 w-10 h-10 bg-white text-black rounded-full text-2xl font-light flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition"
       >
         +
       </button>
 
-      <!-- input -->
+      <!-- Input -->
       <input
         ref="fileInput"
         type="file"
@@ -59,6 +58,7 @@ const store = useStore()
 const fileInput = ref(null)
 const backgroundImage = ref(store.state.bgImage || '')
 
+// примерные данные
 const togetherText = computed(() => '1 год 5 месяцев 20 дней')
 const totalDays = computed(() => '538')
 
