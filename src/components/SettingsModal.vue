@@ -30,6 +30,15 @@
             />
           </div>
 
+          <div class="mb-6">
+  <label class="block text-sm mb-2 opacity-70">Дата начала отношений:</label>
+  <input
+    v-model="form.startDate"
+    type="date"
+    class="w-full bg-transparent border border-white/20 rounded-full px-4 py-2 focus:border-pink-500 transition [color-scheme:dark]"
+  />
+</div>
+
           <!-- два круглых фото -->
           <div class="flex justify-between items-center gap-6 mb-6">
             <!-- фото 1 -->
@@ -120,8 +129,10 @@ watch(
     if (val) {
       form.value.name1 = store.state.name1
       form.value.name2 = store.state.name2
+      form.value.startDate = store.state.startDate
       photoSelf.value = store.state.photo1
       photoPartner.value = store.state.photo2
+      
     }
   },
   { immediate: true }
@@ -154,6 +165,8 @@ function save() {
   if (form.value.name2) store.setName2(form.value.name2)
   if (photoSelf.value) store.setPhoto1(photoSelf.value)
   if (photoPartner.value) store.setPhoto2(photoPartner.value)
+  store.setStartDate(form.value.startDate)
+  setTimeout(() => emit('close'), 250)
 
   // плавное закрытие
   setTimeout(() => emit('close'), 250)
