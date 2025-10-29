@@ -5,52 +5,28 @@ const state = reactive({
   name2: '',
   photo1: '',
   photo2: '',
-  bgImage: ''
+  widgets: [
+    { date: '09 мая 2024', title: 'Первое свидание' },
+    { date: '14 фев 2024', title: 'Первый поцелуй' }
+  ]
 })
 
-// Загружаем сохранённые данные из localStorage
-const saved = localStorage.getItem('lover_chains_vue_state_v2')
-if (saved) {
-  try {
-    Object.assign(state, JSON.parse(saved))
-  } catch (e) {
-    console.error('Ошибка при чтении данных из localStorage', e)
-  }
+export function useStore() {
+  function setName1(name) { state.name1 = name }
+  function setName2(name) { state.name2 = name }
+  function setPhoto1(photo) { state.photo1 = photo }
+  function setPhoto2(photo) { state.photo2 = photo }
+  function addWidget(widget) { state.widgets.push(widget) }
+
+  return { state, setName1, setName2, setPhoto1, setPhoto2, addWidget }
 }
 
-// ✅ Автоматическое сохранение всех изменений
+// 💾 сохраняем в localStorage
 watch(
-  state,
-  (newState) => {
-    localStorage.setItem('lover_chains_vue_state_v2', JSON.stringify(newState))
-  },
+  () => state,
+  () => localStorage.setItem('loverState', JSON.stringify(state)),
   { deep: true }
 )
 
-// ✅ Методы управления состоянием
-function setName1(v) {
-  state.name1 = v
-}
-function setName2(v) {
-  state.name2 = v
-}
-function setPhoto1(v) {
-  state.photo1 = v
-}
-function setPhoto2(v) {
-  state.photo2 = v
-}
-function setBgImage(v) {
-  state.bgImage = v
-}
-
-export function useStore() {
-  return {
-    state,
-    setName1,
-    setName2,
-    setPhoto1,
-    setPhoto2,
-    setBgImage,
-  }
-}
+const saved = localStorage.getItem('loverState')
+if (saved) Object.assign(state, JSON.parse(saved))
