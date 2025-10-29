@@ -38,27 +38,16 @@ const displayImage = computed(() => props.modelValue || props.image)
 <style>
 /* 💥 чистый glow на box-shadow — его Vercel не режет */
 .neon-border {
-  position: relative;
-  border-radius: 50%;
   box-shadow:
-    0 0 25px 8px rgba(255, 0, 122, 0.4),
-    0 0 60px 15px rgba(168, 85, 247, 0.3),
-    0 0 120px 25px rgba(255, 0, 200, 0.2);
-  transition: all 0.5s ease-in-out;
-  z-index: 1;
+    0 0 10px 3px rgba(255, 0, 122, 0.3),
+    0 0 20px 6px rgba(168, 85, 247, 0.25),
+    0 0 40px 10px rgba(255, 0, 200, 0.15);
 }
 
-/* эффект дыхания */
 .neon-border::before {
-  content: '';
-  position: absolute;
-  inset: -10px;
-  border-radius: 50%;
   box-shadow:
-    0 0 35px 10px rgba(255, 0, 122, 0.5),
-    0 0 80px 20px rgba(168, 85, 247, 0.4);
-  animation: neonPulse 3s ease-in-out infinite alternate;
-  z-index: 0;
+    0 0 15px 4px rgba(255, 0, 122, 0.4),
+    0 0 30px 8px rgba(168, 85, 247, 0.35);
 }
 
 @keyframes neonPulse {
