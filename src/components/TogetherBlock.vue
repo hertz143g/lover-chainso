@@ -3,7 +3,7 @@
     <h2 class="text-xl font-bold mb-4">Вместе уже:</h2>
 
     <div
-      class="relative border border-purple-500/40 rounded-[28px] overflow-hidden p-0 min-h-[250px] flex flex-col justify-between"
+      class="relative border border-purple-500/40 rounded-[28px] overflow-hidden min-h-[250px] flex flex-col justify-between"
     >
       <!-- Фото -->
       <div
@@ -12,21 +12,21 @@
         :style="{ backgroundImage: `url(${backgroundImage})` }"
       ></div>
 
-      <!-- Затемнение (поверх фото) -->
+      <!-- Затемнение -->
       <div
         v-if="backgroundImage"
         class="absolute inset-0 bg-[#12001a]/70"
       ></div>
 
       <!-- Контент -->
-      <div class="relative z-10 flex flex-col justify-between h-full py-6 px-6">
+      <div class="relative z-10 flex flex-col justify-between h-full">
         <!-- Верхний текст -->
-        <p class="text-[18px] text-white/90 leading-snug">
+        <p class="text-[18px] text-white/90 leading-snug pt-5 pl-5">
           {{ togetherText }}
         </p>
 
         <!-- Нижний текст -->
-        <p class="text-[22px] font-semibold text-right text-white/90 mt-auto">
+        <p class="text-[22px] font-semibold text-right text-white/90 pb-5 pr-5">
           {{ totalDays }} дней
         </p>
       </div>
@@ -59,7 +59,6 @@ const store = useStore()
 const fileInput = ref(null)
 const backgroundImage = ref(store.state.bgImage || '')
 
-// временные данные
 const togetherText = computed(() => '1 год 5 месяцев 20 дней')
 const totalDays = computed(() => '538')
 
