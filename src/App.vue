@@ -15,7 +15,7 @@ const showSettings = ref(false)
     <div class="mx-auto w-full max-w-[430px] min-h-screen pb-24">
       <!-- в Header у тебя должна быть кнопка, вызывающая open-settings -->
       <Header @open-settings="showSettings = true" />
-      <Header @open-settings="console.log('НАЖАЛСЯ HEADER'); showSettings = true" />
+      
 
       <CoupleCircles />
       <TogetherBlock />
