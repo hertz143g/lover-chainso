@@ -13,9 +13,7 @@
       ></div>
 
       <!-- Затемнение -->
-      <div
-        class="absolute inset-0 bg-[#12001a]/65 pointer-events-none"
-      ></div>
+      <div class="absolute inset-0 bg-[#12001a]/70 pointer-events-none"></div>
 
       <!-- Контент -->
       <div class="relative z-10 w-full h-full flex flex-col justify-between">
@@ -25,7 +23,7 @@
         </p>
 
         <!-- Низ -->
-        <p class="text-[22px] font-semibold text-right text-white/90 pb-5 pr-5">
+        <p class="text-[22px] font-semibold text-right text-white/90 pb-4 pr-5">
           {{ totalDays }} дней
         </p>
       </div>
@@ -33,7 +31,7 @@
       <!-- Кнопка выбора фото -->
       <button
         @click="pickImage"
-        class="absolute top-3 right-3 z-20 w-10 h-10 bg-white text-black rounded-full text-2xl font-light flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition"
+        class="absolute bottom-4 right-4 z-20 w-8 h-8 bg-white/20 text-white rounded-full text-xl font-light flex items-center justify-center backdrop-blur-sm border border-white/30 hover:bg-white/30 transition active:scale-95"
       >
         +
       </button>
@@ -58,7 +56,6 @@ const store = useStore()
 const fileInput = ref(null)
 const backgroundImage = ref(store.state.bgImage || '')
 
-// примерные данные
 const togetherText = computed(() => '1 год 5 месяцев 20 дней')
 const totalDays = computed(() => '538')
 
