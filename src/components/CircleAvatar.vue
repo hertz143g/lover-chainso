@@ -1,8 +1,11 @@
 <template>
   <div class="relative flex flex-col items-center select-none">
     <div
-      class="relative flex items-center justify-center rounded-full overflow-hidden neon-ring"
-      :style="{ width: size + 'px', height: size + 'px' }"
+      class="relative flex items-center justify-center rounded-full overflow-hidden neon-border"
+      :style="{
+        width: size + 'px',
+        height: size + 'px',
+      }"
     >
       <!-- Фото -->
       <img
@@ -12,8 +15,8 @@
       />
       <div v-else class="absolute inset-0 bg-[#2a2335]" />
 
-      <!-- Анимированный неон -->
-      <div class="absolute inset-0 rounded-full pointer-events-none neon-anim"></div>
+      <!-- Обводка неона -->
+      <div class="absolute inset-0 rounded-full neon-glow pointer-events-none"></div>
     </div>
 
     <div class="mt-3 text-base tracking-wide font-medium opacity-90">
@@ -31,42 +34,46 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.neon-ring {
-  border-radius: 50%;
+/* Базовая обводка */
+.neon-border {
   position: relative;
-  border: 2px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 0 20px 4px rgba(255, 0, 128, 0.08);
-  background: radial-gradient(circle at center, #20132b 60%, transparent 100%);
-  overflow: visible;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px 2px rgba(255, 0, 128, 0.2);
 }
 
-/* вот тут магия ✨ */
-.neon-anim::before {
-  content: "";
+/* Динамическое свечение */
+.neon-glow::before,
+.neon-glow::after {
+  content: '';
   position: absolute;
-  inset: -10px;
+  inset: -8px;
   border-radius: 50%;
+  filter: blur(25px);
   background: conic-gradient(
     from 0deg,
+    #ff4ec6,
     #ff009d,
     #a855f7,
-    #ff4ec6,
-    #ff009d
+    #ff4ec6
   );
-  filter: blur(20px);
-  opacity: 0.6;
-  animation: neonSpin 6s linear infinite, neonPulse 3s ease-in-out infinite alternate;
+  animation: spin 6s linear infinite;
+  opacity: 0.5;
+  z-index: -1;
 }
 
-/* плавное вращение цвета */
-@keyframes neonSpin {
+.neon-glow::after {
+  animation: pulse 3s ease-in-out infinite alternate;
+}
+
+/* Плавное вращение градиента */
+@keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* лёгкое “дыхание” */
-@keyframes neonPulse {
-  0% { opacity: 0.35; transform: scale(0.97); }
-  100% { opacity: 0.85; transform: scale(1.05); }
+/* “Дыхание” свечения */
+@keyframes pulse {
+  0% { opacity: 0.3; transform: scale(0.96); }
+  100% { opacity: 0.8; transform: scale(1.04); }
 }
 </style>
