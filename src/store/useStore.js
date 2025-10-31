@@ -6,7 +6,7 @@ const state = reactive({
   photo1: '',
   photo2: '',
   startDate: '',     // 🆕 дата начала отношений
-  widgets: []        // пусто по умолчанию
+  widgets: []        
 })
 
 export function useStore() {
