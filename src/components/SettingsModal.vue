@@ -9,9 +9,11 @@
         <div
           class="bg-[#1a0024] border border-white/10 rounded-3xl p-6 w-[90%] max-w-md text-white shadow-lg shadow-pink-500/10"
         >
-          <h2 class="text-2xl font-semibold text-center mb-6">Настройки</h2>
+          <h2 class="text-2xl font-semibold text-center mb-6">
+            Настройки
+          </h2>
 
-          <!-- поля для имён -->
+          <!-- имена -->
           <div class="space-y-4 mb-6">
             <input
               v-model="form.name1"
@@ -35,7 +37,25 @@
             />
           </div>
 
-          <!-- два фото -->
+          <!-- темы -->
+          <div class="mb-8">
+            <p class="text-sm mb-3 opacity-70">Цветовая тема:</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div
+                v-for="(t, name) in theme.themes"
+                :key="name"
+                class="rounded-2xl border border-white/10 p-3 cursor-pointer transition-all duration-300 hover:scale-[1.03]"
+                :style="{ background: t.bg, color: t.text }"
+                @click="theme.setTheme(name)"
+              >
+                <div class="text-center font-medium capitalize">
+                  {{ name }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- фото -->
           <div class="flex justify-between items-center gap-6 mb-6">
             <div class="flex flex-col items-center gap-2 flex-1">
               <div @click="pickImage('self')" class="relative cursor-pointer group">
@@ -47,7 +67,9 @@
                 <div
                   v-else
                   class="w-24 h-24 rounded-full border-2 border-white/30 flex items-center justify-center text-3xl text-white/60 group-hover:text-pink-400 transition"
-                >+</div>
+                >
+                  +
+                </div>
               </div>
               <p class="text-xs opacity-70">Вы</p>
             </div>
@@ -62,29 +84,19 @@
                 <div
                   v-else
                   class="w-24 h-24 rounded-full border-2 border-white/30 flex items-center justify-center text-3xl text-white/60 group-hover:text-pink-400 transition"
-                >+</div>
+                >
+                  +
+                </div>
               </div>
               <p class="text-xs opacity-70">Партнёр</p>
             </div>
           </div>
 
+          <!-- инпут -->
           <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="onFileChange" />
 
-          <!-- выбор темы -->
-          <div class="mt-6 text-center">
-            <p class="text-sm text-white/70 mb-2">Выбери тему:</p>
-            <div class="flex justify-center gap-3 flex-wrap">
-              <div
-                v-for="(t, name) in theme.themes"
-                :key="name"
-                class="w-8 h-8 rounded-full cursor-pointer border-2 transition-transform hover:scale-110"
-                :style="{ backgroundColor: t.accent, borderColor: theme.current === name ? '#fff' : 'transparent' }"
-                @click="theme.setTheme(name)"
-              ></div>
-            </div>
-          </div>
-
-          <div class="flex justify-end mt-6">
+          <!-- кнопка -->
+          <div class="flex justify-end">
             <button
               @click.prevent="save"
               class="px-6 py-2 rounded-full bg-white/20 border border-white/30 hover:bg-white/30 transition active:scale-95"
@@ -116,7 +128,7 @@ let currentType = null
 
 watch(
   () => props.show,
-  (val) => {
+  val => {
     if (val) {
       form.value.name1 = store.state.name1
       form.value.name2 = store.state.name2
@@ -152,10 +164,10 @@ function onFileChange(e) {
 function save() {
   if (form.value.name1) store.setName1(form.value.name1)
   if (form.value.name2) store.setName2(form.value.name2)
-  if (form.value.startDate) store.setStartDate(form.value.startDate)
   if (photoSelf.value) store.setPhoto1(photoSelf.value)
   if (photoPartner.value) store.setPhoto2(photoPartner.value)
-  setTimeout(() => emit('close'), 250)
+  store.setStartDate(form.value.startDate)
+  setTimeout(() => emit('close'), 300)
 }
 
 function close() {
@@ -164,13 +176,17 @@ function close() {
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.3s ease;
 }
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
-.scale-enter-active, .scale-leave-active {
+
+.scale-enter-active,
+.scale-leave-active {
   transition: all 0.25s ease;
 }
 .scale-enter-from {
