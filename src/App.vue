@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import Header from '@/components/Header.vue'
 import CoupleCircles from '@/components/CoupleCircles.vue'
 import TogetherBlock from '@/components/TogetherBlock.vue'
@@ -8,9 +8,14 @@ import SettingsModal from '@/components/SettingsModal.vue'
 
 const showSettings = ref(false)
 
-// создаём фон-анимацию частиц
-onMounted(() => {
-  const canvas = document.getElementById('particles-bg')
+onMounted(async () => {
+  await nextTick()
+
+  const canvas = document.createElement('canvas')
+  canvas.id = 'particles-bg'
+  canvas.className = 'fixed inset-0 z-0 pointer-events-none'
+  document.body.appendChild(canvas)
+
   const ctx = canvas.getContext('2d')
 
   let w, h, particles
@@ -36,11 +41,11 @@ onMounted(() => {
 
   function draw() {
     ctx.clearRect(0, 0, w, h)
-    ctx.fillStyle = 'rgba(255, 0, 128, 0.15)'
-    ctx.shadowColor = '#ff0088'
-    ctx.shadowBlur = 12
+    ctx.fillStyle = 'rgba(255, 0, 128, 0.18)'
+    ctx.shadowColor = '#ff0099'
+    ctx.shadowBlur = 15
 
-    particles.forEach(p => {
+    for (const p of particles) {
       ctx.beginPath()
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
       ctx.fill()
@@ -50,7 +55,7 @@ onMounted(() => {
 
       if (p.x < 0 || p.x > w) p.dx *= -1
       if (p.y < 0 || p.y > h) p.dy *= -1
-    })
+    }
 
     requestAnimationFrame(draw)
   }
@@ -63,11 +68,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="relative min-h-screen overflow-hidden text-white">
-    <!-- 🌌 Анимированный фон -->
-    <canvas id="particles-bg" class="absolute inset-0 z-0"></canvas>
-
-    <!-- 🌸 Контент -->
+  <div class="relative min-h-screen overflow-hidden text-white bg-[#12001a]">
     <div class="relative z-10 mx-auto w-full max-w-[430px] min-h-screen pb-24">
       <Header @open-settings="showSettings = true" />
       <CoupleCircles />
@@ -75,7 +76,6 @@ onMounted(() => {
       <StatsGrid />
     </div>
 
-    <!-- ⚙️ Модалка настроек -->
     <SettingsModal :show="showSettings" @close="showSettings = false" />
   </div>
 </template>
