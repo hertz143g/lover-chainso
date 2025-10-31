@@ -19,7 +19,7 @@ onMounted(async () => {
   const ctx = canvas.getContext('2d')
 
   let w, h, particles
-  const particleCount = 60
+  const particleCount = 150 // 👈 больше частиц!
 
   function resize() {
     w = canvas.width = window.innerWidth
@@ -32,30 +32,32 @@ onMounted(async () => {
       particles.push({
         x: Math.random() * w,
         y: Math.random() * h,
-        r: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5,
+        r: Math.random() * 2.5 + 0.5,
+        dx: (Math.random() - 0.5) * 0.4,
+        dy: (Math.random() - 0.5) * 0.4,
+        hue: 300 + Math.random() * 60, // 👈 разные оттенки неона
+        baseX: Math.random() * w,
+        baseY: Math.random() * h,
+        angle: Math.random() * 360
       })
     }
   }
 
   function draw() {
     ctx.clearRect(0, 0, w, h)
-    ctx.fillStyle = 'rgba(255, 0, 128, 0.18)'
-    ctx.shadowColor = '#ff0099'
-    ctx.shadowBlur = 15
 
-    for (const p of particles) {
+    particles.forEach(p => {
+      p.angle += 0.01
+      p.x = p.baseX + Math.sin(p.angle) * 15
+      p.y = p.baseY + Math.cos(p.angle) * 15
+
       ctx.beginPath()
+      ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, 0.25)`
+      ctx.shadowColor = `hsl(${p.hue}, 100%, 60%)`
+      ctx.shadowBlur = 20
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
       ctx.fill()
-
-      p.x += p.dx
-      p.y += p.dy
-
-      if (p.x < 0 || p.x > w) p.dx *= -1
-      if (p.y < 0 || p.y > h) p.dy *= -1
-    }
+    })
 
     requestAnimationFrame(draw)
   }
@@ -69,6 +71,10 @@ onMounted(async () => {
 
 <template>
   <div class="relative min-h-screen overflow-hidden text-white bg-[#12001a]">
+    <!-- 🌌 Анимированный фон -->
+    <div id="particles-container"></div>
+
+    <!-- 🌸 Контент -->
     <div class="relative z-10 mx-auto w-full max-w-[430px] min-h-screen pb-24">
       <Header @open-settings="showSettings = true" />
       <CoupleCircles />
