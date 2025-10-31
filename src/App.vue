@@ -17,9 +17,8 @@ onMounted(async () => {
   document.body.appendChild(canvas)
 
   const ctx = canvas.getContext('2d')
-
   let w, h, particles
-  const particleCount = 150 // 👈 больше частиц!
+  const particleCount = 150
 
   function resize() {
     w = canvas.width = window.innerWidth
@@ -33,9 +32,7 @@ onMounted(async () => {
         x: Math.random() * w,
         y: Math.random() * h,
         r: Math.random() * 2.5 + 0.5,
-        dx: (Math.random() - 0.5) * 0.4,
-        dy: (Math.random() - 0.5) * 0.4,
-        hue: 300 + Math.random() * 60, // 👈 разные оттенки неона
+        hue: 300 + Math.random() * 60,
         baseX: Math.random() * w,
         baseY: Math.random() * h,
         angle: Math.random() * 360
@@ -45,7 +42,6 @@ onMounted(async () => {
 
   function draw() {
     ctx.clearRect(0, 0, w, h)
-
     particles.forEach(p => {
       p.angle += 0.01
       p.x = p.baseX + Math.sin(p.angle) * 15
@@ -58,7 +54,6 @@ onMounted(async () => {
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
       ctx.fill()
     })
-
     requestAnimationFrame(draw)
   }
 

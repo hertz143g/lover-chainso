@@ -1,19 +1,15 @@
 <template>
-  <!-- Фон с затемнением -->
   <transition name="fade">
     <div
       v-if="show"
       class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
       @click.self="close"
     >
-      <!-- Само окно -->
       <transition name="scale">
         <div
           class="bg-[#1a0024] border border-white/10 rounded-3xl p-6 w-[90%] max-w-md text-white shadow-lg shadow-pink-500/10"
         >
-          <h2 class="text-2xl font-semibold text-center mb-6">
-            Настройки
-          </h2>
+          <h2 class="text-2xl font-semibold text-center mb-6">Настройки</h2>
 
           <!-- поля для имён -->
           <div class="space-y-4 mb-6">
@@ -22,7 +18,6 @@
               placeholder="Ваше имя"
               class="w-full bg-transparent border border-white/20 rounded-full px-4 py-2 focus:outline-none focus:border-pink-500 transition"
             />
-
             <input
               v-model="form.name2"
               placeholder="Имя партнёра"
@@ -30,23 +25,20 @@
             />
           </div>
 
+          <!-- дата -->
           <div class="mb-6">
-  <label class="block text-sm mb-2 opacity-70">Дата начала отношений:</label>
-  <input
-    v-model="form.startDate"
-    type="date"
-    class="w-full bg-transparent border border-white/20 rounded-full px-4 py-2 focus:border-pink-500 transition [color-scheme:dark]"
-  />
-</div>
+            <label class="block text-sm mb-2 opacity-70">Дата начала отношений:</label>
+            <input
+              v-model="form.startDate"
+              type="date"
+              class="w-full bg-transparent border border-white/20 rounded-full px-4 py-2 focus:border-pink-500 transition [color-scheme:dark]"
+            />
+          </div>
 
-          <!-- два круглых фото -->
+          <!-- два фото -->
           <div class="flex justify-between items-center gap-6 mb-6">
-            <!-- фото 1 -->
             <div class="flex flex-col items-center gap-2 flex-1">
-              <div
-                @click="pickImage('self')"
-                class="relative cursor-pointer group"
-              >
+              <div @click="pickImage('self')" class="relative cursor-pointer group">
                 <img
                   v-if="photoSelf"
                   :src="photoSelf"
@@ -55,19 +47,13 @@
                 <div
                   v-else
                   class="w-24 h-24 rounded-full border-2 border-white/30 flex items-center justify-center text-3xl text-white/60 group-hover:text-pink-400 transition"
-                >
-                  +
-                </div>
+                >+</div>
               </div>
               <p class="text-xs opacity-70">Вы</p>
             </div>
 
-            <!-- фото 2 -->
             <div class="flex flex-col items-center gap-2 flex-1">
-              <div
-                @click="pickImage('partner')"
-                class="relative cursor-pointer group"
-              >
+              <div @click="pickImage('partner')" class="relative cursor-pointer group">
                 <img
                   v-if="photoPartner"
                   :src="photoPartner"
@@ -76,24 +62,14 @@
                 <div
                   v-else
                   class="w-24 h-24 rounded-full border-2 border-white/30 flex items-center justify-center text-3xl text-white/60 group-hover:text-pink-400 transition"
-                >
-                  +
-                </div>
+                >+</div>
               </div>
               <p class="text-xs opacity-70">Партнёр</p>
             </div>
           </div>
 
-          <!-- input -->
-          <input
-            ref="fileInput"
-            type="file"
-            accept="image/*"
-            class="hidden"
-            @change="onFileChange"
-          />
+          <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="onFileChange" />
 
-          <!-- кнопка -->
           <div class="flex justify-end">
             <button
               @click.prevent="save"
@@ -116,13 +92,13 @@ const emit = defineEmits(['close'])
 const props = defineProps({ show: Boolean })
 const store = useStore()
 
-const form = ref({ name1: '', name2: '' })
+const form = ref({ name1: '', name2: '', startDate: '' })
 const photoSelf = ref('')
 const photoPartner = ref('')
 const fileInput = ref(null)
 let currentType = null
 
-// при открытии модалки — сразу загружаем текущие данные
+// при открытии модалки загружаем данные
 watch(
   () => props.show,
   (val) => {
@@ -132,7 +108,6 @@ watch(
       form.value.startDate = store.state.startDate
       photoSelf.value = store.state.photo1
       photoPartner.value = store.state.photo2
-      
     }
   },
   { immediate: true }
@@ -159,16 +134,12 @@ function onFileChange(e) {
   reader.readAsDataURL(file)
 }
 
-// ✅ Исправленная логика сохранения
 function save() {
   if (form.value.name1) store.setName1(form.value.name1)
   if (form.value.name2) store.setName2(form.value.name2)
+  if (form.value.startDate) store.setStartDate(form.value.startDate)
   if (photoSelf.value) store.setPhoto1(photoSelf.value)
   if (photoPartner.value) store.setPhoto2(photoPartner.value)
-  store.setStartDate(form.value.startDate)
-  setTimeout(() => emit('close'), 250)
-
-  // плавное закрытие
   setTimeout(() => emit('close'), 250)
 }
 
@@ -178,17 +149,13 @@ function close() {
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
+.fade-enter-active, .fade-leave-active {
   transition: opacity 0.3s ease;
 }
-.fade-enter-from,
-.fade-leave-to {
+.fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
-
-.scale-enter-active,
-.scale-leave-active {
+.scale-enter-active, .scale-leave-active {
   transition: all 0.25s ease;
 }
 .scale-enter-from {
