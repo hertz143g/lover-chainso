@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
+import { useThemeStore } from '@/store/useThemeStore'
 import Header from '@/components/Header.vue'
 import CoupleCircles from '@/components/CoupleCircles.vue'
 import TogetherBlock from '@/components/TogetherBlock.vue'
@@ -7,6 +8,10 @@ import StatsGrid from '@/components/WidgetsGrid.vue'
 import SettingsModal from '@/components/SettingsModal.vue'
 
 const showSettings = ref(false)
+const theme = useThemeStore()
+theme.loadTheme()
+
+const currentTheme = computed(() => theme.themes[theme.current])
 
 onMounted(async () => {
   await nextTick()
@@ -32,7 +37,7 @@ onMounted(async () => {
         x: Math.random() * w,
         y: Math.random() * h,
         r: Math.random() * 2.5 + 0.5,
-        hue: 300 + Math.random() * 60,
+        hue: Math.random() * 60 + (theme.current === 'romantic' ? 300 : 200),
         baseX: Math.random() * w,
         baseY: Math.random() * h,
         angle: Math.random() * 360
@@ -61,15 +66,16 @@ onMounted(async () => {
   createParticles()
   draw()
   window.addEventListener('resize', resize)
+
+  watch(() => theme.current, () => createParticles())
 })
 </script>
 
 <template>
-  <div class="relative min-h-screen overflow-hidden text-white bg-[#12001a]">
-    <!-- 🌌 Анимированный фон -->
-    <div id="particles-container"></div>
-
-    <!-- 🌸 Контент -->
+  <div
+    class="relative min-h-screen overflow-hidden transition-colors duration-500"
+    :style="{ backgroundColor: currentTheme.bg, color: currentTheme.text }"
+  >
     <div class="relative z-10 mx-auto w-full max-w-[430px] min-h-screen pb-24">
       <Header @open-settings="showSettings = true" />
       <CoupleCircles />
@@ -83,7 +89,6 @@ onMounted(async () => {
 
 <style>
 body {
-  background-color: #12001a;
   overflow-x: hidden;
 }
 </style>
