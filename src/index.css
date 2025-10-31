@@ -38,3 +38,20 @@ textarea:focus {
 input[type="date"][color-scheme="dark"] {
   color-scheme: dark;
 }
+
+:root{
+  --bg:#12001a;
+  --header-bg:#1a0024;
+  --text:#ffffff;
+  --text-muted:#cfc6d9;
+  --accent:#ff4b9f;
+  --border:rgba(255, 75, 159, 0.35);
+  --card:rgba(255,255,255,0.03);
+  --glow:rgba(255, 75, 159, 0.35);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 400ms ease, color 300ms ease;
+}

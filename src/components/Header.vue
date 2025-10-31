@@ -5,17 +5,18 @@ const emit = defineEmits(['open-settings'])
 
 <template>
   <header
-    class="flex justify-between items-center px-6 py-4 text-sm text-gray-300 select-none"
+    class="flex justify-between items-center px-6 py-4 text-sm select-none"
+    :style="{ background: 'var(--header-bg)', color: 'var(--text)' }"
   >
-    <span class="hover:text-white transition">магазин</span>
+    <span class="opacity-70 hover:opacity-100 transition">магазин</span>
 
     <h1 class="text-xl font-bold tracking-widest">
-      <span class="text-pink-500">LOVER</span> CHAINSO
+      <span :style="{ color: 'var(--accent)' }">LOVER</span> CHAINSO
     </h1>
 
     <button
       @click="emit('open-settings')"
-      class="hover:text-white transition-colors"
+      class="opacity-70 hover:opacity-100 transition-colors"
     >
       настройки
     </button>

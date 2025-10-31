@@ -1,58 +1,73 @@
 import { defineStore } from 'pinia'
-import { watch } from 'vue'
 
 export const useThemeStore = defineStore('theme', {
   state: () => ({
-    current: 'dark',
+    current: localStorage.getItem('lover_theme') || 'dark',
     themes: {
       dark: {
+        name: 'Тёмная',
         bg: '#12001a',
+        headerBg: '#1a0024',
         text: '#ffffff',
+        textMuted: '#cfc6d9',
         accent: '#ff4b9f',
-        header: '#1a001f'
+        border: 'rgba(255, 75, 159, 0.35)',
+        cardBg: 'rgba(255,255,255,0.03)',
+        glow: 'rgba(255, 75, 159, 0.35)'
       },
       romantic: {
-        bg: 'linear-gradient(180deg, #ffe6f0, #ffcce5)',
-        text: '#4a0033',
-        accent: '#ff5ea0',
-        header: '#ffbcd9'
-      },
-      gold: {
-        bg: 'linear-gradient(180deg, #f7e6b2, #f9d56e)',
-        text: '#4a3000',
-        accent: '#d4a017',
-        header: '#f7e6b2'
+        name: 'Розовая',
+        bg: 'linear-gradient(180deg,#ffe6f1,#ffd1e8)',
+        headerBg: '#ffd1e8',
+        text: '#3a003d',
+        textMuted: '#5c2a53',
+        accent: '#ff2e87',
+        border: 'rgba(255, 46, 135, 0.35)',
+        cardBg: 'rgba(0,0,0,0.06)',
+        glow: 'rgba(255,46,135,0.35)'
       },
       ocean: {
-        bg: 'linear-gradient(180deg, #002233, #004466)',
-        text: '#e0f8ff',
-        accent: '#33ccff',
-        header: '#003344'
+        name: 'Океан',
+        bg: 'linear-gradient(180deg,#0b1221,#0c2744)',
+        headerBg: '#0c2744',
+        text: '#e9f6ff',
+        textMuted: '#b6d3ea',
+        accent: '#39b6ff',
+        border: 'rgba(57,182,255,0.4)',
+        cardBg: 'rgba(255,255,255,0.04)',
+        glow: 'rgba(57,182,255,0.35)'
       },
+      gold: {
+        name: 'Золото',
+        bg: 'linear-gradient(180deg,#f7e6b2,#f3d172)',
+        headerBg: '#f7e6b2',
+        text: '#2a2100',
+        textMuted: '#6a5c2b',
+        accent: '#d4a017',
+        border: 'rgba(212,160,23,0.4)',
+        cardBg: 'rgba(0,0,0,0.06)',
+        glow: 'rgba(212,160,23,0.35)'
+      }
     }
   }),
-
   actions: {
     setTheme(name) {
-      if (this.themes[name]) {
-        this.current = name
-        this.applyTheme()
-      }
+      if (!this.themes[name]) return
+      this.current = name
+      localStorage.setItem('lover_theme', name)
+      this.applyTheme()
     },
     applyTheme() {
       const t = this.themes[this.current]
-      document.documentElement.style.setProperty('--bg', t.bg)
-      document.documentElement.style.setProperty('--text', t.text)
-      document.documentElement.style.setProperty('--accent', t.accent)
-      document.documentElement.style.setProperty('--header', t.header)
-      localStorage.setItem('lover_theme', this.current)
-    }
+      const r = document.documentElement.style
+      r.setProperty('--bg', t.bg)
+      r.setProperty('--header-bg', t.headerBg)
+      r.setProperty('--text', t.text)
+      r.setProperty('--text-muted', t.textMuted)
+      r.setProperty('--accent', t.accent)
+      r.setProperty('--border', t.border)
+      r.setProperty('--card', t.cardBg)
+      r.setProperty('--glow', t.glow)
+    },
   }
 })
-
-// Автоматическое применение при загрузке
-watch(
-  () => useThemeStore().current,
-  () => useThemeStore().applyTheme(),
-  { immediate: true }
-)

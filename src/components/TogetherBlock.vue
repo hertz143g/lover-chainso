@@ -1,9 +1,16 @@
 <template>
   <div class="px-5 mt-10">
-    <h2 class="text-xl font-bold mb-4">Вместе уже:</h2>
+    <h2 class="text-xl font-bold mb-4" :style="{ color: 'var(--text)' }">
+      Вместе уже:
+    </h2>
 
     <div
-      class="relative rounded-[28px] overflow-hidden border border-pink-500/40 min-h-[280px] shadow-[0_0_25px_rgba(255,0,122,0.2)]"
+      class="relative rounded-[28px] overflow-hidden min-h-[280px] transition-all duration-500"
+      :style="{
+        border: '1px solid var(--border)',
+        boxShadow: '0 0 25px var(--glow)',
+        background: 'var(--card)'
+      }"
     >
       <!-- Фото -->
       <div
@@ -14,19 +21,22 @@
 
       <!-- Затемнение -->
       <div
-        class="absolute inset-0 bg-[#12001a]/70 pointer-events-none transition-opacity duration-300"
+        class="absolute inset-0 pointer-events-none transition-opacity duration-300"
+        :style="{ background: 'rgba(0,0,0,0.45)' }"
       ></div>
 
       <!-- Текст сверху -->
       <p
-        class="absolute top-5 left-5 z-20 text-[18px] text-white/90 tracking-wide font-light"
+        class="absolute top-5 left-5 z-20 text-[18px] tracking-wide font-light"
+        :style="{ color: 'var(--text)' }"
       >
         {{ togetherText }}
       </p>
 
       <!-- Текст снизу справа -->
       <p
-        class="absolute bottom-4 right-5 z-20 text-[22px] font-semibold text-white/90"
+        class="absolute bottom-4 right-5 z-20 text-[22px] font-semibold"
+        :style="{ color: 'var(--text)' }"
       >
         {{ diff.daysTotal }} дней
       </p>
@@ -34,7 +44,12 @@
       <!-- Кнопка выбора фото -->
       <button
         @click="pickImage"
-        class="absolute bottom-4 left-4 z-20 w-8 h-8 rounded-full border border-white/30 bg-white/20 text-white text-xl flex items-center justify-center backdrop-blur-sm hover:bg-white/30 active:scale-95 transition"
+        class="absolute bottom-4 left-4 z-20 w-8 h-8 rounded-full text-xl flex items-center justify-center backdrop-blur-sm hover:scale-110 active:scale-95 transition"
+        :style="{
+          background: 'color-mix(in oklab, var(--accent) 20%, transparent)',
+          border: '1px solid var(--border)',
+          color: 'var(--text)'
+        }"
       >
         +
       </button>
@@ -58,7 +73,7 @@ const store = useStore()
 const fileInput = ref(null)
 const backgroundImage = ref(store.state.bgImage || '')
 
-// дата из стора
+// дата начала отношений
 const startDate = computed(() => store.state.startDate)
 
 // вычисляем разницу между датами
@@ -86,11 +101,10 @@ const diff = computed(() => {
   }
 
   const daysTotal = Math.floor((now - start) / (1000 * 60 * 60 * 24))
-
   return { years, months, days, daysTotal }
 })
 
-// красивые склонения
+// склонения
 function plural(n, one, few, many) {
   const n10 = n % 10
   const n100 = n % 100
@@ -99,12 +113,13 @@ function plural(n, one, few, many) {
   return many
 }
 
+// вывод красивого текста
 const togetherText = computed(() => {
   const { years, months, days } = diff.value
-  const yText = years > 0 ? `${years} ${plural(years, 'год', 'года', 'лет')}` : ''
-  const mText = months > 0 ? `${months} ${plural(months, 'месяц', 'месяца', 'месяцев')}` : ''
-  const dText = days > 0 ? `${days} ${plural(days, 'день', 'дня', 'дней')}` : ''
-  return [yText, mText, dText].filter(Boolean).join(' ')
+  const y = years ? `${years} ${plural(years, 'год', 'года', 'лет')}` : ''
+  const m = months ? `${months} ${plural(months, 'месяц', 'месяца', 'месяцев')}` : ''
+  const d = days ? `${days} ${plural(days, 'день', 'дня', 'дней')}` : ''
+  return [y, m, d].filter(Boolean).join(' ')
 })
 
 // выбор фото
@@ -124,12 +139,20 @@ function onFileChange(e) {
   reader.readAsDataURL(file)
 }
 
-// следим за изменением фона
+// обновляем при изменении фона
 watch(
   () => store.state.bgImage,
-  val => {
-    if (val) backgroundImage.value = val
-  },
+  val => (backgroundImage.value = val),
   { immediate: true }
 )
 </script>
+
+<style scoped>
+/* плавный переход цветов при смене темы */
+div,
+p,
+button {
+  transition: color 0.4s ease, border-color 0.4s ease, background 0.5s ease,
+    box-shadow 0.5s ease;
+}
+</style>
