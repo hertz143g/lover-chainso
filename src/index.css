@@ -4,7 +4,7 @@
 html, body, #app { height: 100%; }
 body { background:#12001a; color:white; -webkit-font-smoothing:antialiased; }
 
-input[type="text"],
+input[type="text"], 
 input[type="date"],
 input[type="number"],
 input[type="email"],
