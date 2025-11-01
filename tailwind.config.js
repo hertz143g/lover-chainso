@@ -3,4 +3,10 @@ export default {
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
+  extend: {
+  fontFamily: {
+    open: ['"Open Sans"', 'system-ui', 'sans-serif'],
+  },
 }
+}
+
