@@ -4,17 +4,16 @@
       Виджеты:
     </h2>
 
-    <!-- сетка -->
+    <!-- 🪄 Сетка -->
     <div class="grid grid-cols-2 gap-4">
       <div
         v-for="widget in store.state.widgets"
         :key="widget.id"
-        class="rounded-2xl p-4 transition duration-300 hover:scale-[1.02] cursor-pointer backdrop-blur"
+        class="rounded-2xl p-4 transition-all duration-400 backdrop-blur-md cursor-pointer"
         :style="{
           background: 'var(--card)',
-          border: `1px solid ${widget.color || 'var(--border)'}`,
-          boxShadow: `0 0 15px ${(widget.color || 'var(--accent)')}40`,
-          color: 'var(--text)'
+          border: `1.5px solid ${widget.color || 'var(--border)'}`,
+          boxShadow: `0 0 25px ${widget.color || 'var(--glow)'}55`
         }"
         @click="openEdit(widget)"
       >
@@ -27,20 +26,21 @@
       </div>
     </div>
 
-    <!-- кнопка добавления -->
+    <!-- ➕ Добавить виджет -->
     <button
       @click="showAdd = true"
-      class="mt-6 w-full rounded-full py-3 font-medium transition active:scale-95"
+      class="mt-6 w-full rounded-full py-3 transition-all duration-300 active:scale-95"
       :style="{
-        border: '1px solid var(--border)',
-        background: 'color-mix(in oklab, var(--accent) 20%, transparent)',
-        color: 'var(--text)'
+        background: 'var(--card)',
+        border: '1.5px solid var(--border)',
+        color: 'var(--text)',
+        boxShadow: '0 0 15px var(--glow)'
       }"
     >
       добавить виджет
     </button>
 
-    <!-- модалки -->
+    <!-- Модалки -->
     <AddWidgetModal v-if="showAdd" @close="showAdd = false" />
     <EditWidgetModal v-if="editWidget" :widget="editWidget" @close="editWidget = null" />
   </section>
@@ -62,8 +62,13 @@ function openEdit(widget) {
 </script>
 
 <style scoped>
-button,
-div {
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+section {
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+button:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 30px var(--accent);
 }
 </style>

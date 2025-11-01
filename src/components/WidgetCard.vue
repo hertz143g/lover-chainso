@@ -1,26 +1,31 @@
 <template>
   <div
-    class="rounded-[26px] h-28 p-4 backdrop-blur flex flex-col justify-between transition-all duration-300 hover:scale-[1.02]"
+    class="rounded-[26px] h-28 p-4 border-2 bg-opacity-40 backdrop-blur-md flex flex-col justify-between transition-all duration-400 cursor-pointer"
     :style="{
       background: 'var(--card)',
-      border: `2px solid ${color || 'var(--border)'}`,
-      boxShadow: `0 10px 30px ${color || 'var(--glow)'}40`,
+      borderColor: color || 'var(--accent)',
+      boxShadow: `0 0 20px ${(color || 'var(--accent)')}40`,
       color: 'var(--text)'
     }"
   >
-    <div class="text-[12px] opacity-85"><slot name='title' /></div>
-    <div class="text-[14px] font-semibold"><slot name='subtitle' /></div>
+    <div class="text-[12px] opacity-85 truncate">
+      <slot name="title" />
+    </div>
+    <div class="text-[14px] font-semibold truncate">
+      <slot name="subtitle" />
+    </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
-  color: { type: String, default: 'var(--accent)' }
+const props = defineProps({
+  color: { type: String, default: '' }
 })
 </script>
 
 <style scoped>
-div {
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+div:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 35px var(--accent);
 }
 </style>

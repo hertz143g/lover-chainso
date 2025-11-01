@@ -1,62 +1,63 @@
 <template>
-  <div class="relative flex flex-col items-center select-none">
+  <div
+    class="relative flex flex-col items-center transition-all duration-500 select-none"
+    :style="{ color: 'var(--text)' }"
+  >
+    <!-- 🖼️ Аватар -->
     <div
-      class="relative flex items-center justify-center rounded-full overflow-hidden neon-border"
-      :style="{ width: size + 'px', height: size + 'px' }"
+      class="rounded-full overflow-hidden border-2 flex items-center justify-center backdrop-blur-md shadow-lg transition-all duration-500"
+      :style="{
+        width: size + 'px',
+        height: size + 'px',
+        borderColor: 'var(--accent)',
+        boxShadow: `0 0 25px var(--glow)`,
+        background: image ? 'transparent' : 'var(--card)'
+      }"
     >
-      <!-- Фото -->
       <img
-        v-if="displayImage"
-        :src="displayImage"
-        class="absolute inset-0 w-full h-full object-cover rounded-full z-10"
+        v-if="image"
+        :src="image"
+        :alt="label"
+        class="w-full h-full object-cover rounded-full transition-all duration-300"
       />
-      <div
+      <span
         v-else
-        class="absolute inset-0 bg-[#2a2335] rounded-full z-10"
-      ></div>
+        class="text-3xl opacity-70 font-light"
+        :style="{ color: 'var(--accent)' }"
+      >
+        +
+      </span>
     </div>
 
-    <div class="mt-3 text-base tracking-wide font-medium opacity-90">
+    <!-- 🩷 Имя -->
+    <p
+      class="mt-3 text-sm font-medium tracking-wide"
+      :style="{
+        color: 'var(--text)',
+        textShadow: `0 0 8px var(--glow)`
+      }"
+    >
       {{ label }}
-    </div>
+    </p>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-
 const props = defineProps({
-  modelValue: { type: String, default: '' },
-  image: { type: String, default: '' },
-  label: { type: String, default: '' },
-  size: { type: Number, default: 200 },
+  image: String,
+  label: String,
+  size: { type: Number, default: 180 },
+  side: String,
 })
-
-const displayImage = computed(() => props.modelValue || props.image)
 </script>
 
-<style>
-/* 💥 чистый glow на box-shadow — его Vercel не режет */
-.neon-border {
-  box-shadow:
-    0 0 6px 2px rgba(255, 0, 122, 0.4),
-    0 0 12px 4px rgba(168, 85, 247, 0.3);
+<style scoped>
+div {
+  transition: all 0.4s ease;
 }
 
-.neon-border::before {
-  box-shadow:
-    0 0 8px 3px rgba(255, 0, 122, 0.4),
-    0 0 16px 6px rgba(168, 85, 247, 0.35);
-}
-
-@keyframes neonPulse {
-  0% {
-    opacity: 0.6;
-    transform: scale(0.98);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.03);
-  }
+img:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
 }
 </style>

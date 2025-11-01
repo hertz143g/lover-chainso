@@ -1,87 +1,149 @@
 <template>
-  <div
-    class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm"
-    @click.self="$emit('close')"
-  >
+  <transition name="fade">
     <div
-      class="bg-[#1a0024] border border-pink-500/30 rounded-3xl p-6 w-[90%] max-w-sm text-white shadow-lg"
+      v-if="show"
+      class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50"
+      @click.self="emit('close')"
     >
-      <h2 class="text-center text-xl font-semibold mb-6">Добавить виджет</h2>
+      <transition name="scale">
+        <div
+          class="rounded-3xl p-6 w-[90%] max-w-md shadow-lg border text-white transition-all"
+          :style="{
+            background: 'var(--card)',
+            borderColor: 'var(--border)',
+            color: 'var(--text)',
+            boxShadow: '0 0 25px var(--glow)'
+          }"
+        >
+          <h2 class="text-2xl font-semibold text-center mb-6">
+            Новый виджет
+          </h2>
 
-      <!-- 🗓 Выбор даты -->
-      <div class="mb-4">
-        <label class="block text-sm mb-2 opacity-70">Дата:</label>
-        <input
-          v-model="form.date"
-          type="date"
-          class="w-full px-4 py-2 bg-transparent border border-white/20 rounded-full focus:border-pink-500 outline-none text-white [color-scheme:dark]"
-        />
-      </div>
+          <!-- 📅 Название -->
+          <div class="mb-4">
+            <label class="block text-sm mb-1 opacity-80">Название:</label>
+            <input
+              v-model="title"
+              type="text"
+              placeholder="Например: Первое свидание"
+              class="w-full bg-transparent border rounded-full px-4 py-2 focus:outline-none transition"
+              :style="{
+                borderColor: 'var(--border)',
+                color: 'var(--text)'
+              }"
+            />
+          </div>
 
-      <!-- 📝 Название -->
-      <div class="mb-6">
-        <label class="block text-sm mb-2 opacity-70">Описание:</label>
-        <input
-          v-model="form.title"
-          placeholder="Например: Первое свидание"
-          class="w-full px-4 py-2 bg-transparent border border-white/20 rounded-full focus:border-pink-500 outline-none"
-        />
-      </div>
+          <!-- 📆 Дата -->
+          <div class="mb-4">
+            <label class="block text-sm mb-1 opacity-80">Дата:</label>
+            <input
+              v-model="date"
+              type="date"
+              class="w-full bg-transparent border rounded-full px-4 py-2 focus:outline-none transition [color-scheme:dark]"
+              :style="{ borderColor: 'var(--border)', color: 'var(--text)' }"
+            />
+          </div>
 
-      <!-- 🎨 Цвет -->
-      <div class="mb-6">
-        <p class="text-sm mb-2 opacity-70">Цвет виджета:</p>
-        <div class="flex justify-between">
-          <div
-            v-for="color in colors"
-            :key="color"
-            class="w-8 h-8 rounded-full cursor-pointer border-2 transition"
-            :class="{
-              'scale-110 border-white': form.color === color
-            }"
-            :style="{ backgroundColor: color }"
-            @click="form.color = color"
-          ></div>
+          <!-- 🎨 Цвет -->
+          <div class="mb-6">
+            <label class="block text-sm mb-2 opacity-80">Цвет:</label>
+            <div class="flex gap-2 flex-wrap">
+              <div
+                v-for="c in colors"
+                :key="c"
+                class="w-8 h-8 rounded-full cursor-pointer border-2 transition-all duration-300"
+                :style="{
+                  background: c,
+                  borderColor: c === color ? '#fff' : 'transparent',
+                  boxShadow: c === color ? `0 0 15px ${c}` : 'none'
+                }"
+                @click="color = c"
+              ></div>
+            </div>
+          </div>
+
+          <!-- 🔘 Кнопки -->
+          <div class="flex justify-end gap-3">
+            <button
+              @click="emit('close')"
+              class="px-4 py-2 rounded-full border transition-all"
+              :style="{
+                borderColor: 'var(--border)',
+                color: 'var(--text)'
+              }"
+            >
+              Отмена
+            </button>
+            <button
+              @click="add"
+              class="px-5 py-2 rounded-full transition-all"
+              :style="{
+                background: 'var(--accent)',
+                color: '#fff',
+                boxShadow: '0 0 20px var(--accent)'
+              }"
+            >
+              Добавить
+            </button>
+          </div>
         </div>
-      </div>
-
-      <!-- 💾 Сохранить -->
-      <button
-        @click="save"
-        class="w-full py-2 rounded-full bg-pink-500 hover:bg-pink-400 transition"
-      >
-        Сохранить
-      </button>
+      </transition>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useStore } from '@/store/useStore'
 
+const props = defineProps({ show: Boolean })
 const emit = defineEmits(['close'])
 const store = useStore()
 
-const form = ref({
-  date: '',
-  title: '',
-  color: '#ec4899'
-})
+const title = ref('')
+const date = ref('')
+const color = ref('#ff8ba7')
 
-const colors = ['#ec4899', '#8b5cf6', '#06b6d4', '#f59e0b']
+const colors = [
+  '#ff8ba7', '#ffb26b', '#ffd56f',
+  '#b5e48c', '#76c7c0', '#9b5de5',
+  '#7ae582', '#ff6b6b'
+]
 
-function save() {
-  if (!form.value.date || !form.value.title) return
-  // форматируем дату красиво
-  const formattedDate = new Date(form.value.date).toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  })
-
-  store.addWidget({ ...form.value, date: formattedDate })
-  form.value = { date: '', title: '', color: '#ec4899' }
-  setTimeout(() => emit('close'), 200)
+function add() {
+  if (!title.value || !date.value) return
+  const widget = {
+    id: Date.now(),
+    title: title.value,
+    date: date.value,
+    color: color.value
+  }
+  store.addWidget(widget)
+  emit('close')
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.25s ease;
+}
+.scale-enter-from {
+  transform: scale(0.9);
+  opacity: 0;
+}
+.scale-leave-to {
+  transform: scale(0.95);
+  opacity: 0;
+}
+</style>
