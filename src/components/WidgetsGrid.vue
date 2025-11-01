@@ -1,38 +1,48 @@
 <template>
   <section class="max-w-[430px] mx-auto px-6 mt-10">
-    <h2 class="text-xl font-semibold mb-4">Виджеты:</h2>
+    <h2 class="text-xl font-semibold mb-4" :style="{ color: 'var(--text)' }">
+      Виджеты:
+    </h2>
 
+    <!-- сетка -->
     <div class="grid grid-cols-2 gap-4">
       <div
         v-for="widget in store.state.widgets"
         :key="widget.id"
-        class="rounded-2xl p-4 bg-white/5 border transition duration-300 hover:scale-[1.02] cursor-pointer"
+        class="rounded-2xl p-4 transition duration-300 hover:scale-[1.02] cursor-pointer backdrop-blur"
         :style="{
-          borderColor: widget.color + '55',
-          boxShadow: `0 0 15px ${widget.color}40`
+          background: 'var(--card)',
+          border: `1px solid ${widget.color || 'var(--border)'}`,
+          boxShadow: `0 0 15px ${(widget.color || 'var(--accent)')}40`,
+          color: 'var(--text)'
         }"
         @click="openEdit(widget)"
       >
-        <p class="text-sm mb-2" :style="{ color: widget.color }">
+        <p class="text-sm mb-2 opacity-80" :style="{ color: widget.color || 'var(--accent)' }">
           {{ widget.date }}
         </p>
-        <p class="font-medium text-white">{{ widget.title }}</p>
+        <p class="font-medium" :style="{ color: 'var(--text)' }">
+          {{ widget.title }}
+        </p>
       </div>
     </div>
 
+    <!-- кнопка добавления -->
     <button
       @click="showAdd = true"
-      class="mt-6 w-full rounded-full border border-violet-400/50 bg-violet-900/30 py-3 hover:bg-violet-700/40 transition"
+      class="mt-6 w-full rounded-full py-3 font-medium transition active:scale-95"
+      :style="{
+        border: '1px solid var(--border)',
+        background: 'color-mix(in oklab, var(--accent) 20%, transparent)',
+        color: 'var(--text)'
+      }"
     >
       добавить виджет
     </button>
 
+    <!-- модалки -->
     <AddWidgetModal v-if="showAdd" @close="showAdd = false" />
-    <EditWidgetModal
-      v-if="editWidget"
-      :widget="editWidget"
-      @close="editWidget = null"
-    />
+    <EditWidgetModal v-if="editWidget" :widget="editWidget" @close="editWidget = null" />
   </section>
 </template>
 
@@ -50,3 +60,10 @@ function openEdit(widget) {
   editWidget.value = { ...widget }
 }
 </script>
+
+<style scoped>
+button,
+div {
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+</style>

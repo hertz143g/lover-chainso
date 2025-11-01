@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import Header from '@/components/Header.vue'
 import CoupleCircles from '@/components/CoupleCircles.vue'
 import TogetherBlock from '@/components/TogetherBlock.vue'
@@ -11,12 +11,10 @@ const showSettings = ref(false)
 const theme = useThemeStore()
 
 onMounted(async () => {
+  theme.applyTheme()
   await nextTick()
 
-  // применяем тему при загрузке
-  theme.applyTheme()
-
-  // 🎇 частицы под цвет темы
+  // фон-частицы
   const canvas = document.createElement('canvas')
   canvas.id = 'particles-bg'
   canvas.className = 'fixed inset-0 z-0 pointer-events-none'
@@ -24,60 +22,53 @@ onMounted(async () => {
   const ctx = canvas.getContext('2d')
 
   let w, h, particles
-  const particleCount = 160
+  const count = 160
 
   function resize() {
     w = canvas.width = window.innerWidth
     h = canvas.height = window.innerHeight
   }
-
-  function createParticles() {
-    particles = []
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: Math.random() * 2.5 + 0.5,
-        baseX: Math.random() * w,
-        baseY: Math.random() * h,
-        angle: Math.random() * 360,
-        hue: theme.themes[theme.current].accent || '#ff4b9f'
-      })
-    }
+  function accentColor() {
+    const s = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+    return s || '#ff4b9f'
   }
-
+  function create() {
+    particles = Array.from({ length: count }, () => ({
+      bx: Math.random() * w,
+      by: Math.random() * h,
+      a: Math.random() * 360,
+      r: Math.random() * 2.5 + 0.6
+    }))
+  }
   function draw() {
     ctx.clearRect(0, 0, w, h)
-    const accent = theme.themes[theme.current].accent
-
-    particles.forEach(p => {
-      p.angle += 0.01
-      p.x = p.baseX + Math.sin(p.angle) * 15
-      p.y = p.baseY + Math.cos(p.angle) * 15
-
+    const acc = accentColor()
+    for (const p of particles) {
+      p.a += 0.01
+      const x = p.bx + Math.sin(p.a) * 14
+      const y = p.by + Math.cos(p.a) * 14
       ctx.beginPath()
-      ctx.fillStyle = `${accent}40`
-      ctx.shadowColor = accent
-      ctx.shadowBlur = 20
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+      ctx.fillStyle = acc + '33'
+      ctx.shadowColor = acc
+      ctx.shadowBlur = 18
+      ctx.arc(x, y, p.r, 0, Math.PI * 2)
       ctx.fill()
-    })
-
+    }
     requestAnimationFrame(draw)
   }
 
-  resize()
-  createParticles()
-  draw()
-  window.addEventListener('resize', resize)
+  resize(); create(); draw()
+  window.addEventListener('resize', () => { resize(); create() })
+
+  watch(() => theme.current, () => {
+    theme.applyTheme()
+    create()
+  })
 })
 </script>
 
 <template>
-  <div
-    class="relative min-h-screen overflow-hidden transition-colors duration-500"
-    :style="{ background: 'var(--bg)', color: 'var(--text)' }"
-  >
+  <div class="relative min-h-screen overflow-hidden">
     <div class="relative z-10 mx-auto w-full max-w-[430px] min-h-screen pb-24">
       <Header @open-settings="showSettings = true" />
       <CoupleCircles />
@@ -91,8 +82,6 @@ onMounted(async () => {
 
 <style>
 body {
-  background-color: var(--bg);
-  overflow-x: hidden;
-  transition: background 0.5s ease;
+  transition: background 1.2s ease, color 0.8s ease;
 }
 </style>
