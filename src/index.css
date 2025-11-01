@@ -1,76 +1,129 @@
-@import "tailwindcss";
+/* ====== БАЗА ТЕМЫ (заполняется из useThemeStore.applyTheme) ====== */
+:root {
+  --bg: #12001a;
+  --text: #ffffff;
+  --accent: #ff4b9f;
+  --border: #ffffff33;
+  --glow: rgba(255, 75, 159, 0.35);
+  --card: rgba(255,255,255,0.08);
 
+  --header-height: 96px;
+  --glass-blur: 14px;
+  --glass-bg: color-mix(in srgb, var(--bg) 18%, transparent);
+  --glass-border: rgba(255,255,255,0.18);
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.08);
+  --shadow-text: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+/* ====== Глобальные стили ====== */
 html, body {
-  font-family: "Open Sans", system-ui, sans-serif;
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Open Sans", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
   font-weight: 400;
-  font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: 0.2px;
-  transition: color 0.4s ease, background 0.6s ease;
+
+  background: var(--bg);
+  color: var(--text);
+  transition: background 1.2s ease, color 0.8s ease, border-color 0.6s ease, box-shadow 0.6s ease;
+  overflow-x: hidden;
 }
 
-:root {
-  --shadow-text: 0 1px 2px rgba(0, 0, 0, 0.25);
-}
-
-h1, h2, h3, button, p {
+/* Лёгкая текстовая тень — дороже читается на стекле */
+h1,h2,h3,p,button,span {
   text-shadow: var(--shadow-text);
 }
 
-:root { color-scheme: dark; } 
-html, body, #app { height: 100%; }
-body { background:#12001a; color:white; -webkit-font-smoothing:antialiased; }
-
-input[type="text"], 
-input[type="date"],
-input[type="number"],
-input[type="email"],
-select,
-textarea {
-  appearance: none;
-  -webkit-appearance: none;
-  background-color: transparent;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.6rem 1rem;
-  font-size: 0.95rem;
-  line-height: 1.25rem;
-  color: #fff;
-  height: 44px;
+/* ====== Слои “жидкой” сцены ====== */
+#particles-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-  opacity: 0.8;
-  cursor: pointer;
+/* Микро-шум как у Apple обоев */
+#noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .06;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.25'/%3E%3C/svg%3E");
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #ec4899; /* розовый */
-  outline: none;
+/* ====== Утилиты Liquid Glass ====== */
+.liquid-header {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: var(--header-height);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  z-index: 50;
+  transition: background .5s ease, border-color .3s ease, color .3s ease, backdrop-filter .3s ease;
 }
 
-input[type="date"][color-scheme="dark"] {
-  color-scheme: dark;
+/* Контейнер под фикс-хедер */
+.page-shell {
+  position: relative;
+  z-index: 10;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: calc(var(--header-height) + 0px) 0 96px; /* сверху — под хедер, снизу — воздух */
 }
 
-:root{
-  --bg:#12001a;
-  --header-bg:#1a0024;
-  --text:#ffffff;
-  --text-muted:#cfc6d9;
-  --accent:#ff4b9f;
-  --border:rgba(255, 75, 159, 0.35);
-  --card:rgba(255,255,255,0.03);
-  --glow:rgba(255, 75, 159, 0.35);
+/* Карточки/модалки в одном стиле */
+.glass-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft), 0 0 25px var(--glow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background .4s ease, border-color .4s ease, box-shadow .4s ease, transform .2s ease;
 }
 
-html, body {
-  background: var(--bg);
+.glass-card--hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+/* Кнопки “дорогие” */
+.btn {
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
   color: var(--text);
-  transition: background 400ms ease, color 300ms ease;
+  border-radius: 9999px;
+  padding: .65rem 1rem;
+  font-weight: 600;
+  transition: transform .15s ease, box-shadow .3s ease, background .3s ease, border-color .3s ease;
+  backdrop-filter: blur(6px);
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.btn:active {
+  transform: translateY(0) scale(.98);
 }
 
+/* Плашки секций */
+.section-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+/* Плавность всего */
+* {
+  transition: color .3s ease, border-color .3s ease, background .3s ease, box-shadow .3s ease;
+}

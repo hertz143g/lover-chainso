@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick, watch } from 'vue'
+import { ref, onMounted, nextTick, watch, onBeforeUnmount } from 'vue'
 import Header from '@/components/Header.vue'
 import CoupleCircles from '@/components/CoupleCircles.vue'
 import TogetherBlock from '@/components/TogetherBlock.vue'
@@ -10,92 +10,99 @@ import { useThemeStore } from '@/store/useThemeStore'
 const showSettings = ref(false)
 const theme = useThemeStore()
 
+let canvas, ctx, rafId, particles = []
+let w = 0, h = 0
+const COUNT = 160
+
+function resize() {
+  if (!canvas) return
+  w = canvas.width = window.innerWidth
+  h = canvas.height = window.innerHeight
+}
+
+function accentColor() {
+  const s = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+  return s || '#ff4b9f'
+}
+
+function createParticles() {
+  particles = Array.from({ length: COUNT }, () => ({
+    bx: Math.random() * w,
+    by: Math.random() * h,
+    a: Math.random() * 360,
+    r: Math.random() * 2.5 + 0.6,
+    s: Math.random() * 0.015 + 0.008
+  }))
+}
+
+function draw() {
+  if (!ctx) return
+  ctx.clearRect(0, 0, w, h)
+  const acc = accentColor()
+  for (const p of particles) {
+    p.a += p.s
+    const x = p.bx + Math.sin(p.a) * 14
+    const y = p.by + Math.cos(p.a) * 14
+    ctx.beginPath()
+    ctx.fillStyle = acc + '33'
+    ctx.shadowColor = acc
+    ctx.shadowBlur = 18
+    ctx.arc(x, y, p.r, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  rafId = requestAnimationFrame(draw)
+}
+
 onMounted(async () => {
   theme.applyTheme()
   await nextTick()
 
-  // фон частицы
-  const canvas = document.createElement('canvas')
+  // частицы
+  canvas = document.createElement('canvas')
   canvas.id = 'particles-bg'
-  canvas.className = 'fixed inset-0 z-0 pointer-events-none'
   document.body.appendChild(canvas)
-  const ctx = canvas.getContext('2d')
-
-  let w, h, particles
-  const count = 160
-
-  function resize() {
-    w = canvas.width = window.innerWidth
-    h = canvas.height = window.innerHeight
-  }
-
-  function accentColor() {
-    const s = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
-    return s || '#ff4b9f'
-  }
-
-  function create() {
-    particles = Array.from({ length: count }, () => ({
-      bx: Math.random() * w,
-      by: Math.random() * h,
-      a: Math.random() * 360,
-      r: Math.random() * 2.5 + 0.6
-    }))
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, w, h)
-    const acc = accentColor()
-    for (const p of particles) {
-      p.a += 0.01
-      const x = p.bx + Math.sin(p.a) * 14
-      const y = p.by + Math.cos(p.a) * 14
-      ctx.beginPath()
-      ctx.fillStyle = acc + '33'
-      ctx.shadowColor = acc
-      ctx.shadowBlur = 18
-      ctx.arc(x, y, p.r, 0, Math.PI * 2)
-      ctx.fill()
-    }
-    requestAnimationFrame(draw)
-  }
-
+  ctx = canvas.getContext('2d')
   resize()
-  create()
+  createParticles()
   draw()
+
+  // шум
+  const noise = document.createElement('div')
+  noise.id = 'noise-overlay'
+  document.body.appendChild(noise)
+
   window.addEventListener('resize', () => {
     resize()
-    create()
+    createParticles()
   })
 
+  // при смене темы — обновляем палитру и “раскидываем” точки заново
   watch(() => theme.current, () => {
     theme.applyTheme()
-    create()
+    createParticles()
   })
+})
+
+onBeforeUnmount(() => {
+  if (rafId) cancelAnimationFrame(rafId)
+  const c = document.getElementById('particles-bg')
+  const n = document.getElementById('noise-overlay')
+  c && c.remove()
+  n && n.remove()
 })
 </script>
 
 <template>
   <div class="relative min-h-screen overflow-hidden font-open">
-    <!-- основной контент -->
-    <div class="relative z-10 mx-auto w-full max-w-[430px] min-h-screen pb-24 pt-24">
-      <Header @open-settings="showSettings = true" />
+    <Header @open-settings="showSettings = true" />
+
+    <!-- Контент под стеклянным хедером -->
+    <main class="page-shell">
       <CoupleCircles />
       <TogetherBlock />
       <StatsGrid />
-    </div>
+    </main>
 
     <SettingsModal :show="showSettings" @close="showSettings = false" />
   </div>
 </template>
-
-<style>
-body {
-  transition: background 1.2s ease, color 0.8s ease;
-  font-family: "Open Sans", system-ui, sans-serif;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  letter-spacing: 0.2px;
-}
-</style>
