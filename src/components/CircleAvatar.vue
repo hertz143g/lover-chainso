@@ -1,22 +1,44 @@
 <template>
-  <div class="relative flex flex-col items-center select-none">
+  <div
+    class="relative flex flex-col items-center select-none transition-all duration-500"
+    :style="{ transform: 'translateY(0)', color: 'var(--text)' }"
+  >
+    <!-- оболочка -->
     <div
-      class="relative flex items-center justify-center rounded-full overflow-hidden neon-border"
-      :style="{ width: size + 'px', height: size + 'px' }"
+      class="relative rounded-full overflow-hidden backdrop-blur-2xl border shadow-inner transition-all duration-500 avatar-glass"
+      :style="{
+        width: size + 'px',
+        height: size + 'px',
+        borderColor: 'var(--border)',
+        boxShadow: `0 0 40px ${accentColor}55, inset 0 0 25px ${accentColor}20`
+      }"
     >
-      <!-- Фото -->
+      <!-- фото -->
       <img
         v-if="displayImage"
         :src="displayImage"
-        class="absolute inset-0 w-full h-full object-cover rounded-full z-10"
+        class="absolute inset-0 w-full h-full object-cover rounded-full z-10 transition-all duration-700"
       />
+
+      <!-- если нет фото -->
       <div
         v-else
-        class="absolute inset-0 bg-[#2a2335] rounded-full z-10"
+        class="absolute inset-0 rounded-full flex items-center justify-center text-[48px] opacity-60 font-light"
+      >
+        <span>?</span>
+      </div>
+
+      <!-- подсветка вокруг -->
+      <div
+        class="absolute inset-0 rounded-full pointer-events-none transition-all"
+        :style="{
+          boxShadow: `0 0 40px 10px ${accentColor}30`
+        }"
       ></div>
     </div>
 
-    <div class="mt-3 text-base tracking-wide font-medium opacity-90">
+    <!-- подпись -->
+    <div class="mt-4 text-base font-semibold tracking-wide text-center opacity-90">
       {{ label }}
     </div>
   </div>
@@ -26,37 +48,25 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  modelValue: { type: String, default: '' },
-  image: { type: String, default: '' },
-  label: { type: String, default: '' },
-  size: { type: Number, default: 200 },
+  image: String,
+  label: String,
+  size: { type: Number, default: 200 }
 })
 
-const displayImage = computed(() => props.modelValue || props.image)
+const accentColor = getComputedStyle(document.documentElement)
+  .getPropertyValue('--accent')
+  .trim()
+
+const displayImage = computed(() => props.image || '')
 </script>
 
-<style>
-/* 💥 чистый glow на box-shadow — его Vercel не режет */
-.neon-border {
-  box-shadow:
-    0 0 6px 2px rgba(255, 0, 122, 0.4),
-    0 0 12px 4px rgba(168, 85, 247, 0.3);
+<style scoped>
+.avatar-glass {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
-
-.neon-border::before {
-  box-shadow:
-    0 0 8px 3px rgba(255, 0, 122, 0.4),
-    0 0 16px 6px rgba(168, 85, 247, 0.35);
-}
-
-@keyframes neonPulse {
-  0% {
-    opacity: 0.6;
-    transform: scale(0.98);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.03);
-  }
+.avatar-glass:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 50px 10px var(--glow);
 }
 </style>
