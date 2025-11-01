@@ -1,26 +1,38 @@
 <template>
   <div
-    class="rounded-[26px] h-28 p-4 backdrop-blur flex flex-col justify-between transition-all duration-300 hover:scale-[1.02]"
+    class="rounded-3xl p-4 backdrop-blur-xl transition-all duration-500 hover:scale-[1.02] cursor-pointer relative"
     :style="{
       background: 'var(--card)',
-      border: `2px solid ${color || 'var(--border)'}`,
-      boxShadow: `0 10px 30px ${color || 'var(--glow)'}40`,
+      border: `1px solid var(--border)`,
+      boxShadow: `0 0 30px var(--glow)`,
       color: 'var(--text)'
     }"
+    @click="$emit('click')"
   >
-    <div class="text-[12px] opacity-85"><slot name='title' /></div>
-    <div class="text-[14px] font-semibold"><slot name='subtitle' /></div>
+    <p class="text-xs mb-1 opacity-70 tracking-wide">{{ date }}</p>
+    <h3 class="text-base font-semibold leading-snug">{{ title }}</h3>
+
+    <!-- мягкая подсветка -->
+    <div
+      class="absolute inset-0 rounded-3xl pointer-events-none opacity-0 hover:opacity-40 transition-all"
+      :style="{
+        background: `radial-gradient(circle at center, ${color || 'var(--accent)'}33 0%, transparent 70%)`
+      }"
+    ></div>
   </div>
 </template>
 
 <script setup>
 defineProps({
-  color: { type: String, default: 'var(--accent)' }
+  title: String,
+  date: String,
+  color: String
 })
 </script>
 
 <style scoped>
 div {
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  font-family: "Open Sans", sans-serif;
+  transform-origin: center;
 }
 </style>
