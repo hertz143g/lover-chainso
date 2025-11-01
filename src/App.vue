@@ -14,7 +14,7 @@ onMounted(async () => {
   theme.applyTheme()
   await nextTick()
 
-  // фон-частицы
+  // фон частицы
   const canvas = document.createElement('canvas')
   canvas.id = 'particles-bg'
   canvas.className = 'fixed inset-0 z-0 pointer-events-none'
@@ -28,10 +28,12 @@ onMounted(async () => {
     w = canvas.width = window.innerWidth
     h = canvas.height = window.innerHeight
   }
+
   function accentColor() {
     const s = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
     return s || '#ff4b9f'
   }
+
   function create() {
     particles = Array.from({ length: count }, () => ({
       bx: Math.random() * w,
@@ -40,6 +42,7 @@ onMounted(async () => {
       r: Math.random() * 2.5 + 0.6
     }))
   }
+
   function draw() {
     ctx.clearRect(0, 0, w, h)
     const acc = accentColor()
@@ -57,8 +60,13 @@ onMounted(async () => {
     requestAnimationFrame(draw)
   }
 
-  resize(); create(); draw()
-  window.addEventListener('resize', () => { resize(); create() })
+  resize()
+  create()
+  draw()
+  window.addEventListener('resize', () => {
+    resize()
+    create()
+  })
 
   watch(() => theme.current, () => {
     theme.applyTheme()
@@ -68,8 +76,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="relative min-h-screen overflow-hidden">
-    <div class="relative z-10 mx-auto w-full max-w-[430px] min-h-screen pb-24">
+  <div class="relative min-h-screen overflow-hidden font-open">
+    <!-- основной контент -->
+    <div class="relative z-10 mx-auto w-full max-w-[430px] min-h-screen pb-24 pt-24">
       <Header @open-settings="showSettings = true" />
       <CoupleCircles />
       <TogetherBlock />
@@ -83,5 +92,10 @@ onMounted(async () => {
 <style>
 body {
   transition: background 1.2s ease, color 0.8s ease;
+  font-family: "Open Sans", system-ui, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.2px;
 }
 </style>
