@@ -57,7 +57,7 @@ onMounted(async () => {
   theme.applyTheme()
   await nextTick()
 
-  // частицы
+  // создаём canvas для частиц
   canvas = document.createElement('canvas')
   canvas.id = 'particles-bg'
   document.body.appendChild(canvas)
@@ -66,7 +66,7 @@ onMounted(async () => {
   createParticles()
   draw()
 
-  // шум
+  // лёгкий шум поверх
   const noise = document.createElement('div')
   noise.id = 'noise-overlay'
   document.body.appendChild(noise)
@@ -76,7 +76,7 @@ onMounted(async () => {
     createParticles()
   })
 
-  // при смене темы — обновляем палитру и “раскидываем” точки заново
+  // при смене темы пересоздаём точки
   watch(() => theme.current, () => {
     theme.applyTheme()
     createParticles()
@@ -94,15 +94,23 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="relative min-h-screen overflow-hidden font-open">
+    <!-- Фиксированный стеклянный хедер -->
     <Header @open-settings="showSettings = true" />
 
-    <!-- Контент под стеклянным хедером -->
+    <!-- Основной контент -->
     <main class="page-shell">
       <CoupleCircles />
       <TogetherBlock />
       <StatsGrid />
     </main>
 
+    <!-- Модалка настроек -->
     <SettingsModal :show="showSettings" @close="showSettings = false" />
   </div>
 </template>
+
+<style>
+body {
+  transition: background 1.2s ease, color 0.8s ease;
+}
+</style>
