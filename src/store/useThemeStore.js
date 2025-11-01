@@ -34,7 +34,7 @@ export const useThemeStore = defineStore('theme', {
       }
     }
   }),
-
+ 
   actions: {
     setTheme(name) {
       this.current = name
