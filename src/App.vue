@@ -105,4 +105,4 @@ onBeforeUnmount(() => {
 
     <SettingsModal :show="showSettings" @close="showSettings = false" />
   </div>
-</template>
+</template> 
