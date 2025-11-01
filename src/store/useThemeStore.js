@@ -5,69 +5,52 @@ export const useThemeStore = defineStore('theme', {
     current: localStorage.getItem('lover_theme') || 'dark',
     themes: {
       dark: {
-        name: 'Тёмная',
         bg: '#12001a',
-        headerBg: '#1a0024',
         text: '#ffffff',
-        textMuted: '#cfc6d9',
-        accent: '#ff4b9f',
-        border: 'rgba(255, 75, 159, 0.35)',
-        cardBg: 'rgba(255,255,255,0.03)',
-        glow: 'rgba(255, 75, 159, 0.35)'
+        accent: '#ff3f81',
+        border: '#ff3f8140',
+        glow: 'rgba(255,63,129,0.4)',
+        card: '#1a002080'
       },
-      romantic: {
-        name: 'Розовая',
-        bg: 'linear-gradient(180deg,#ffe6f1,#ffd1e8)',
-        headerBg: '#ffd1e8',
-        text: '#3a003d',
-        textMuted: '#5c2a53',
-        accent: '#ff2e87',
-        border: 'rgba(255, 46, 135, 0.35)',
-        cardBg: 'rgba(0,0,0,0.06)',
-        glow: 'rgba(255,46,135,0.35)'
+      light: {
+        bg: '#fff4fa',
+        text: '#2b002d',
+        accent: '#d14b89',
+        border: '#d14b8940',
+        glow: 'rgba(209,75,137,0.4)',
+        card: '#ffffff90'
       },
-      ocean: {
-        name: 'Океан',
-        bg: 'linear-gradient(180deg,#0b1221,#0c2744)',
-        headerBg: '#0c2744',
-        text: '#e9f6ff',
-        textMuted: '#b6d3ea',
-        accent: '#39b6ff',
-        border: 'rgba(57,182,255,0.4)',
-        cardBg: 'rgba(255,255,255,0.04)',
-        glow: 'rgba(57,182,255,0.35)'
-      },
-      gold: {
-        name: 'Золото',
-        bg: 'linear-gradient(180deg,#f7e6b2,#f3d172)',
-        headerBg: '#f7e6b2',
-        text: '#2a2100',
-        textMuted: '#6a5c2b',
-        accent: '#d4a017',
-        border: 'rgba(212,160,23,0.4)',
-        cardBg: 'rgba(0,0,0,0.06)',
-        glow: 'rgba(212,160,23,0.35)'
+      dawn: {
+        // 🌅 новая — как macOS "от рассвета до заката"
+        bg: 'linear-gradient(to bottom, #f6d3a3 0%, #a0b6f9 100%)',
+        text: '#1a1a1a',
+        accent: '#3d66d9',
+        border: '#3d66d940',
+        glow: 'rgba(61,102,217,0.4)',
+        card: 'rgba(255,255,255,0.3)'
       }
     }
   }),
+
   actions: {
     setTheme(name) {
-      if (!this.themes[name]) return
       this.current = name
       localStorage.setItem('lover_theme', name)
       this.applyTheme()
     },
+
     applyTheme() {
-      const t = this.themes[this.current]
-      const r = document.documentElement.style
-      r.setProperty('--bg', t.bg)
-      r.setProperty('--header-bg', t.headerBg)
-      r.setProperty('--text', t.text)
-      r.setProperty('--text-muted', t.textMuted)
-      r.setProperty('--accent', t.accent)
-      r.setProperty('--border', t.border)
-      r.setProperty('--card', t.cardBg)
-      r.setProperty('--glow', t.glow)
-    },
+      const theme = this.themes[this.current]
+      if (!theme) return
+      const root = document.documentElement
+      root.style.setProperty('--bg', theme.bg)
+      root.style.setProperty('--text', theme.text)
+      root.style.setProperty('--accent', theme.accent)
+      root.style.setProperty('--border', theme.border)
+      root.style.setProperty('--glow', theme.glow)
+      root.style.setProperty('--card', theme.card)
+      document.body.style.background = theme.bg
+      document.body.style.color = theme.text
+    }
   }
 })

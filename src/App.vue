@@ -14,7 +14,7 @@ onMounted(async () => {
   theme.applyTheme()
   await nextTick()
 
-  // Фон-частицы, оттенок берём из --accent
+  // фон-частицы
   const canvas = document.createElement('canvas')
   canvas.id = 'particles-bg'
   canvas.className = 'fixed inset-0 z-0 pointer-events-none'
@@ -24,51 +24,46 @@ onMounted(async () => {
   let w, h, particles
   const count = 160
 
-  function resize(){
+  function resize() {
     w = canvas.width = window.innerWidth
     h = canvas.height = window.innerHeight
   }
-  function accentColor(){
-    // получаем rgb из var(--accent)
+  function accentColor() {
     const s = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
     return s || '#ff4b9f'
   }
-  function create(){
-    particles = []
-    for(let i=0;i<count;i++){
-      particles.push({
-        x: Math.random()*w,
-        y: Math.random()*h,
-        r: Math.random()*2.5+0.6,
-        bx: Math.random()*w,
-        by: Math.random()*h,
-        a: Math.random()*360
-      })
-    }
+  function create() {
+    particles = Array.from({ length: count }, () => ({
+      bx: Math.random() * w,
+      by: Math.random() * h,
+      a: Math.random() * 360,
+      r: Math.random() * 2.5 + 0.6
+    }))
   }
-  function draw(){
-    ctx.clearRect(0,0,w,h)
+  function draw() {
+    ctx.clearRect(0, 0, w, h)
     const acc = accentColor()
-    particles.forEach(p=>{
+    for (const p of particles) {
       p.a += 0.01
-      p.x = p.bx + Math.sin(p.a)*14
-      p.y = p.by + Math.cos(p.a)*14
-
+      const x = p.bx + Math.sin(p.a) * 14
+      const y = p.by + Math.cos(p.a) * 14
       ctx.beginPath()
-      ctx.fillStyle = acc + '33' /* ~0.2 */
+      ctx.fillStyle = acc + '33'
       ctx.shadowColor = acc
       ctx.shadowBlur = 18
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
+      ctx.arc(x, y, p.r, 0, Math.PI * 2)
       ctx.fill()
-    })
+    }
     requestAnimationFrame(draw)
   }
 
   resize(); create(); draw()
-  window.addEventListener('resize', ()=>{ resize(); create() })
+  window.addEventListener('resize', () => { resize(); create() })
 
-  // при смене темы перерисовываем, чтобы оттенок взялся новый
-  watch(()=>theme.current, () => { theme.applyTheme(); create() })
+  watch(() => theme.current, () => {
+    theme.applyTheme()
+    create()
+  })
 })
 </script>
 
@@ -86,5 +81,7 @@ onMounted(async () => {
 </template>
 
 <style>
-/* фон и цвет текста задаются через CSS-переменные из темы */
+body {
+  transition: background 1.2s ease, color 0.8s ease;
+}
 </style>
