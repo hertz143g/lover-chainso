@@ -102,16 +102,3 @@ export const useThemeStore = defineStore('theme', {
   }
 })
 
-// обновление каждые 15 минут (если выбрана авто-тема)
-setInterval(() => {
-  if (localStorage.getItem('lover_theme') === 'auto') {
-    const store = useThemeStore()
-    store.applyTimeBasedTheme()
-  }
-}, 15 * 60 * 1000)
-
-// применяем авто-тему при запуске, если выбрана
-if (localStorage.getItem('lover_theme') === 'auto') {
-  const store = useThemeStore()
-  store.applyTimeBasedTheme()
-}
