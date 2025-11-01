@@ -7,26 +7,25 @@
     <div
       class="relative rounded-[28px] overflow-hidden min-h-[280px] transition-all duration-500"
       :style="{
-        border: `2px solid var(--border)`,
-        boxShadow: `0 0 35px var(--glow)`,
-        background: 'var(--card)',
-        color: 'var(--text)'
+        border: '1px solid var(--border)',
+        boxShadow: '0 0 25px var(--glow)',
+        background: 'var(--card)'
       }"
     >
-      <!-- 📸 Фото -->
+      <!-- Фото -->
       <div
         v-if="backgroundImage"
         class="absolute inset-0 bg-center bg-cover transition-all duration-300"
         :style="{ backgroundImage: `url(${backgroundImage})` }"
       ></div>
 
-      <!-- 🌫️ Лёгкое затемнение / выравнивание контраста -->
+      <!-- Затемнение -->
       <div
         class="absolute inset-0 pointer-events-none transition-opacity duration-300"
-        :style="{ background: 'var(--overlay)' }"
+        :style="{ background: 'rgba(0,0,0,0.45)' }"
       ></div>
 
-      <!-- 🕊️ Текст сверху -->
+      <!-- Текст сверху -->
       <p
         class="absolute top-5 left-5 z-20 text-[18px] tracking-wide font-light"
         :style="{ color: 'var(--text)' }"
@@ -34,7 +33,7 @@
         {{ togetherText }}
       </p>
 
-      <!-- 📅 Дни внизу -->
+      <!-- Текст снизу справа -->
       <p
         class="absolute bottom-4 right-5 z-20 text-[22px] font-semibold"
         :style="{ color: 'var(--text)' }"
@@ -42,15 +41,14 @@
         {{ diff.daysTotal }} дней
       </p>
 
-      <!-- ➕ Кнопка выбора фото -->
+      <!-- Кнопка выбора фото -->
       <button
         @click="pickImage"
-        class="absolute bottom-4 left-4 z-20 w-9 h-9 rounded-full flex items-center justify-center text-xl active:scale-95 transition-all"
+        class="absolute bottom-4 left-4 z-20 w-8 h-8 rounded-full text-xl flex items-center justify-center backdrop-blur-sm hover:scale-110 active:scale-95 transition"
         :style="{
-          border: `1.5px solid var(--border)`,
-          background: 'var(--card)',
-          color: 'var(--accent)',
-          boxShadow: `0 0 10px var(--glow)`
+          background: 'color-mix(in oklab, var(--accent) 20%, transparent)',
+          border: '1px solid var(--border)',
+          color: 'var(--text)'
         }"
       >
         +
@@ -75,12 +73,14 @@ const store = useStore()
 const fileInput = ref(null)
 const backgroundImage = ref(store.state.bgImage || '')
 
-// дата из стора
+// дата начала отношений
 const startDate = computed(() => store.state.startDate)
 
 // вычисляем разницу между датами
 const diff = computed(() => {
-  if (!startDate.value) return { years: 0, months: 0, days: 0, daysTotal: 0 }
+  if (!startDate.value) {
+    return { years: 0, months: 0, days: 0, daysTotal: 0 }
+  }
 
   const start = new Date(startDate.value)
   const now = new Date()
@@ -104,7 +104,7 @@ const diff = computed(() => {
   return { years, months, days, daysTotal }
 })
 
-// правильные склонения
+// склонения
 function plural(n, one, few, many) {
   const n10 = n % 10
   const n100 = n % 100
@@ -113,6 +113,7 @@ function plural(n, one, few, many) {
   return many
 }
 
+// вывод красивого текста
 const togetherText = computed(() => {
   const { years, months, days } = diff.value
   const y = years ? `${years} ${plural(years, 'год', 'года', 'лет')}` : ''
@@ -138,22 +139,20 @@ function onFileChange(e) {
   reader.readAsDataURL(file)
 }
 
-// следим за изменением фона
+// обновляем при изменении фона
 watch(
   () => store.state.bgImage,
-  val => {
-    if (val) backgroundImage.value = val
-  },
+  val => (backgroundImage.value = val),
   { immediate: true }
 )
 </script>
 
 <style scoped>
-div {
-  transition: background 0.4s ease, border 0.4s ease, box-shadow 0.5s ease;
-}
-
-button:hover {
-  transform: scale(1.08);
+/* плавный переход цветов при смене темы */
+div,
+p,
+button {
+  transition: color 0.4s ease, border-color 0.4s ease, background 0.5s ease,
+    box-shadow 0.5s ease;
 }
 </style>
